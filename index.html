@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SiPKL Admin — Politeknik Negeri Jakarta</title>
+  <meta name="description" content="Sistem Informasi PKL PNJ — Panel Admin untuk monitoring laporan Praktik Kerja Lapangan mahasiswa.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Noise texture overlay -->
+<div class="noise-layer"></div>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-mark">
+      <span class="brand-hex">⬡</span>
+      <span class="brand-hex brand-hex--2">⬡</span>
+    </div>
+    <div class="brand-text">
+      <span class="brand-name">SiPKL</span>
+      <span class="brand-institute">Politeknik Negeri Jakarta</span>
+    </div>
+    <button class="pin-btn" id="pinBtn" title="Pin sidebar">
+      <i class="fa-solid fa-thumbtack"></i>
+    </button>
+  </div>
+
+  <div class="sidebar-body">
+    <nav class="sidenav">
+      <a class="sidenav-item active" data-page="dashboard" href="#">
+        <span class="sni-icon"><i class="fa-solid fa-house-chimney"></i></span>
+        <span class="sni-label">Beranda</span>
+      </a>
+
+      <div class="sidenav-section">MAHASISWA</div>
+      <a class="sidenav-item" data-page="mahasiswa" href="#">
+        <span class="sni-icon"><i class="fa-solid fa-user-graduate"></i></span>
+        <span class="sni-label">Data Mahasiswa</span>
+        <span class="sni-chip">247</span>
+      </a>
+      <a class="sidenav-item" data-page="pengajuan" href="#">
+        <span class="sni-icon"><i class="fa-solid fa-inbox"></i></span>
+        <span class="sni-label">Pengajuan Masuk</span>
+        <span class="sni-chip sni-chip--alert">12</span>
+      </a>
+      <a class="sidenav-item" data-page="logbook" href="#">
+        <span class="sni-icon"><i class="fa-solid fa-book-bookmark"></i></span>
+        <span class="sni-label">Logbook</span>
+      </a>
+
+      <div class="sidenav-section">AKADEMIK</div>
+      <a class="sidenav-item" data-page="laporan" href="#">
+        <span class="sni-icon"><i class="fa-solid fa-file-contract"></i></span>
+        <span class="sni-label">Laporan Akhir</span>
+      </a>
+      <a class="sidenav-item" data-page="penilaian" href="#">
+        <span class="sni-icon"><i class="fa-solid fa-chart-simple"></i></span>
+        <span class="sni-label">Penilaian & Nilai</span>
+      </a>
+      <a class="sidenav-item" data-page="sistem" href="#">
+        <span class="sni-icon"><i class="fa-solid fa-server"></i></span>
+        <span class="sni-label">Log Sistem</span>
+        <span class="sni-chip sni-chip--sys">SYS</span>
+      </a>
+
+      <div class="sidenav-section">KELOLA</div>
+      <a class="sidenav-item" data-page="industri" href="#">
+        <span class="sni-icon"><i class="fa-solid fa-city"></i></span>
+        <span class="sni-label">Mitra Industri</span>
+      </a>
+      <a class="sidenav-item" data-page="dosen" href="#">
+        <span class="sni-icon"><i class="fa-solid fa-person-chalkboard"></i></span>
+        <span class="sni-label">Dosen Pembimbing</span>
+      </a>
+    </nav>
+  </div>
+
+  <div class="sidebar-foot">
+    <div class="user-card">
+      <div class="user-ava" id="sidebarAva">AD</div>
+      <div class="user-details">
+        <span class="user-fullname">Admin PKL</span>
+        <span class="user-badge">Super Admin</span>
+      </div>
+      <button class="user-logout" title="Keluar" onclick="showConfirmDialog('Keluar dari sistem?', 'Sesi Anda akan diakhiri.', () => showRichToast('info','Berhasil keluar dari sistem'))">
+        <i class="fa-solid fa-right-from-bracket"></i>
+      </button>
+    </div>
+  </div>
+</aside>
+
+<!-- Mobile overlay -->
+<div class="mob-overlay" id="mobOverlay"></div>
+
+<!-- Main -->
+<div class="main-wrap" id="mainWrap">
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="topbar-l">
+      <button class="hamburger" id="hamburger">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="crumb" id="crumb">
+        <i class="fa-solid fa-house-chimney crumb-icon"></i>
+        <span class="crumb-sep">/</span>
+        <span class="crumb-cur" id="crumbCur">Beranda</span>
+      </div>
+    </div>
+    <div class="topbar-r">
+      <div class="top-search" id="topSearch">
+        <i class="fa-solid fa-search"></i>
+        <input type="text" placeholder="Cari apa saja..." id="globalSearch">
+        <kbd>Ctrl K</kbd>
+      </div>
+      <button class="top-btn notif-trigger" id="notifTrigger">
+        <i class="fa-solid fa-bell"></i>
+        <span class="notif-bubble" id="notifBubble">3</span>
+      </button>
+      <button class="top-btn" id="themeBtn" title="Toggle tema">
+        <i class="fa-solid fa-circle-half-stroke"></i>
+      </button>
+      <div class="top-avatar" id="topAvatar">AD</div>
+    </div>
+  </header>
+
+  <!-- Notif dropdown -->
+  <div class="notif-drop" id="notifDrop">
+    <div class="nd-head">
+      <span>Notifikasi</span>
+      <button class="nd-clear" id="ndClear">Hapus semua</button>
+    </div>
+    <div class="nd-list" id="ndList">
+      <div class="nd-item nd-item--new">
+        <div class="nd-dot"></div>
+        <div class="nd-ico nd-ico--warn"><i class="fa-solid fa-file-circle-plus"></i></div>
+        <div class="nd-txt">
+          <b>Pengajuan baru!</b>
+          <p>Budi Santoso → PT. Telkom Indonesia</p>
+          <time>5 mnt lalu</time>
+        </div>
+      </div>
+      <div class="nd-item nd-item--new">
+        <div class="nd-dot"></div>
+        <div class="nd-ico nd-ico--ok"><i class="fa-solid fa-circle-check"></i></div>
+        <div class="nd-txt">
+          <b>Laporan disetujui</b>
+          <p>Siti Rahayu — Dr. Budi, M.T.</p>
+          <time>1 jam lalu</time>
+        </div>
+      </div>
+      <div class="nd-item">
+        <div class="nd-ico nd-ico--sys"><i class="fa-solid fa-server"></i></div>
+        <div class="nd-txt">
+          <b>Sistem: Kalkulasi nilai selesai</b>
+          <p>198 mahasiswa berhasil direkap</p>
+          <time>3 jam lalu</time>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-area" id="contentArea">
+
+    <!-- ═══════════════════ PAGE: DASHBOARD ═══════════════════ -->
+    <div class="page active" id="page-dashboard">
+      <div class="pg-head">
+        <div class="pg-head-text">
+          <h1>Selamat datang kembali 👋</h1>
+          <p>Ini ringkasan aktivitas PKL hari ini, <strong id="todayDate"></strong></p>
+        </div>
+        <div class="pg-head-actions">
+          <button class="btn btn-ghost" onclick="showExportDialog()">
+            <i class="fa-solid fa-file-arrow-down"></i> Export
+          </button>
+          <button class="btn btn-primary" onclick="openAddMahasiswaForm()">
+            <i class="fa-solid fa-user-plus"></i> Tambah Mahasiswa
+          </button>
+        </div>
+      </div>
+
+      <!-- KPI Strip -->
+      <div class="kpi-strip">
+        <div class="kpi-card kpi-blue" data-animate>
+          <div class="kpi-inner">
+            <div class="kpi-left">
+              <span class="kpi-num" data-count="247">0</span>
+              <span class="kpi-lbl">Total Mahasiswa PKL</span>
+              <span class="kpi-sub"><i class="fa-solid fa-arrow-trend-up"></i> +8.2% dari semester lalu</span>
+            </div>
+            <div class="kpi-ico"><i class="fa-solid fa-user-graduate"></i></div>
+          </div>
+          <div class="kpi-sparkline">
+            <svg viewBox="0 0 80 30" preserveAspectRatio="none">
+              <polyline points="0,25 12,20 24,22 36,12 48,15 60,8 72,5 80,3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
+            </svg>
+          </div>
+        </div>
+        <div class="kpi-card kpi-amber" data-animate>
+          <div class="kpi-inner">
+            <div class="kpi-left">
+              <span class="kpi-num" data-count="12">0</span>
+              <span class="kpi-lbl">Pengajuan Pending</span>
+              <span class="kpi-sub"><i class="fa-solid fa-clock"></i> Butuh persetujuan KPS</span>
+            </div>
+            <div class="kpi-ico"><i class="fa-solid fa-inbox"></i></div>
+          </div>
+          <div class="kpi-sparkline">
+            <svg viewBox="0 0 80 30" preserveAspectRatio="none">
+              <polyline points="0,10 12,18 24,12 36,20 48,8 60,16 72,10 80,14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
+            </svg>
+          </div>
+        </div>
+        <div class="kpi-card kpi-green" data-animate>
+          <div class="kpi-inner">
+            <div class="kpi-left">
+              <span class="kpi-num" data-count="198">0</span>
+              <span class="kpi-lbl">Laporan Masuk</span>
+              <span class="kpi-sub"><i class="fa-solid fa-check-double"></i> 80.2% dari total</span>
+            </div>
+            <div class="kpi-ico"><i class="fa-solid fa-file-circle-check"></i></div>
+          </div>
+          <div class="kpi-sparkline">
+            <svg viewBox="0 0 80 30" preserveAspectRatio="none">
+              <polyline points="0,28 12,22 24,18 36,14 48,10 60,7 72,4 80,2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
+            </svg>
+          </div>
+        </div>
+        <div class="kpi-card kpi-violet" data-animate>
+          <div class="kpi-inner">
+            <div class="kpi-left">
+              <span class="kpi-num" data-count="63">0</span>
+              <span class="kpi-lbl">Mitra Industri Aktif</span>
+              <span class="kpi-sub"><i class="fa-solid fa-city"></i> Jabodetabek & sekitar</span>
+            </div>
+            <div class="kpi-ico"><i class="fa-solid fa-city"></i></div>
+          </div>
+          <div class="kpi-sparkline">
+            <svg viewBox="0 0 80 30" preserveAspectRatio="none">
+              <polyline points="0,20 12,18 24,20 36,18 48,16 60,15 72,14 80,13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main grid -->
+      <div class="dash-grid">
+        <!-- Chart col -->
+        <div class="dash-col-main">
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h2 class="card-title">Tren PKL Bulanan</h2>
+                <p class="card-sub">Pengajuan & penyelesaian 6 bulan terakhir</p>
+              </div>
+              <div class="tab-pills" id="chartTabs">
+                <button class="tab-pill active" data-range="6">6 Bln</button>
+                <button class="tab-pill" data-range="12">1 Thn</button>
+              </div>
+            </div>
+            <div class="chart-box"><canvas id="lineChart"></canvas></div>
+          </div>
+
+          <!-- Aktor flow -->
+          <div class="card mt-4">
+            <div class="card-head">
+              <div>
+                <h2 class="card-title">Alur Proses PKL</h2>
+                <p class="card-sub">Status berdasarkan aktor — dari BPMN</p>
+              </div>
+              <button class="btn btn-ghost btn-xs" onclick="showFlowDetail()">
+                <i class="fa-solid fa-diagram-project"></i> Detail
+              </button>
+            </div>
+            <div class="actor-flow">
+              <div class="actor-node node-mhs">
+                <div class="an-icon"><i class="fa-solid fa-user-graduate"></i></div>
+                <span class="an-label">Mahasiswa</span>
+                <span class="an-count">247</span>
+              </div>
+              <div class="flow-arrow"><i class="fa-solid fa-right-long"></i></div>
+              <div class="actor-node node-admin">
+                <div class="an-icon"><i class="fa-solid fa-user-shield"></i></div>
+                <span class="an-label">Admin</span>
+                <span class="an-count">Kelola</span>
+              </div>
+              <div class="flow-arrow"><i class="fa-solid fa-right-long"></i></div>
+              <div class="actor-node node-kps">
+                <div class="an-icon"><i class="fa-solid fa-user-tie"></i></div>
+                <span class="an-label">KPS</span>
+                <span class="an-count">12 pending</span>
+              </div>
+              <div class="flow-arrow"><i class="fa-solid fa-right-long"></i></div>
+              <div class="actor-node node-dosen">
+                <div class="an-icon"><i class="fa-solid fa-person-chalkboard"></i></div>
+                <span class="an-label">Dosen</span>
+                <span class="an-count">Bimbing</span>
+              </div>
+              <div class="flow-arrow"><i class="fa-solid fa-right-long"></i></div>
+              <div class="actor-node node-industri">
+                <div class="an-icon"><i class="fa-solid fa-building-columns"></i></div>
+                <span class="an-label">Industri</span>
+                <span class="an-count">Nilai</span>
+              </div>
+              <div class="flow-arrow"><i class="fa-solid fa-right-long"></i></div>
+              <div class="actor-node node-sistem">
+                <div class="an-icon"><i class="fa-solid fa-server"></i></div>
+                <span class="an-label">Sistem</span>
+                <span class="an-count">Rekap</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Side col -->
+        <div class="dash-col-side">
+          <!-- Donut -->
+          <div class="card">
+            <div class="card-head">
+              <h2 class="card-title">Distribusi Status</h2>
+            </div>
+            <div class="donut-area"><canvas id="donutChart"></canvas></div>
+            <div class="donut-legend" id="donutLegend"></div>
+          </div>
+
+          <!-- Quick actions -->
+          <div class="card">
+            <div class="card-head">
+              <h2 class="card-title">Aksi Cepat</h2>
+            </div>
+            <div class="quick-actions">
+              <button class="qa-btn qa-blue" onclick="openAddMahasiswaForm()">
+                <i class="fa-solid fa-user-plus"></i>
+                <span>Tambah Mahasiswa</span>
+              </button>
+              <button class="qa-btn qa-amber" onclick="goToPage('pengajuan')">
+                <i class="fa-solid fa-inbox"></i>
+                <span>Review Pengajuan</span>
+              </button>
+              <button class="qa-btn qa-green" onclick="showExportDialog()">
+                <i class="fa-solid fa-file-excel"></i>
+                <span>Export Data</span>
+              </button>
+              <button class="qa-btn qa-violet" onclick="goToPage('sistem')">
+                <i class="fa-solid fa-rotate"></i>
+                <span>Jalankan Rekap</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom strip -->
+      <div class="dash-bottom">
+        <!-- Activity feed -->
+        <div class="card">
+          <div class="card-head">
+            <h2 class="card-title">Aktivitas Terbaru</h2>
+            <a class="link-more" href="#" onclick="goToPage('sistem'); return false">Lihat log lengkap →</a>
+          </div>
+          <div class="feed" id="dashFeed"></div>
+        </div>
+
+        <!-- Top scores -->
+        <div class="card">
+          <div class="card-head">
+            <h2 class="card-title">Nilai Terbaik</h2>
+            <a class="link-more" href="#" onclick="goToPage('penilaian'); return false">Lihat semua →</a>
+          </div>
+          <div class="score-list" id="dashScores"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ PAGE: MAHASISWA ═══════════════════ -->
+    <div class="page" id="page-mahasiswa">
+      <div class="pg-head">
+        <div class="pg-head-text">
+          <h1>Data Mahasiswa PKL</h1>
+          <p>Kelola seluruh mahasiswa yang terdaftar dalam program PKL aktif</p>
+        </div>
+        <div class="pg-head-actions">
+          <button class="btn btn-ghost" onclick="openFilterDialog()"><i class="fa-solid fa-sliders"></i> Filter</button>
+          <button class="btn btn-primary" onclick="openAddMahasiswaForm()"><i class="fa-solid fa-user-plus"></i> Tambah</button>
+        </div>
+      </div>
+      <div class="card card-table">
+        <div class="tbl-toolbar">
+          <div class="tbl-search">
+            <i class="fa-solid fa-search"></i>
+            <input type="text" id="mhsSearch" placeholder="Cari nama, NIM...">
+          </div>
+          <div class="tbl-controls">
+            <select class="sel" id="mhsJurusan"><option value="">Semua Jurusan</option><option>Teknik Informatika</option><option>Teknik Mesin</option><option>Teknik Sipil</option><option>Akuntansi</option><option>Administrasi Bisnis</option></select>
+            <select class="sel" id="mhsStatus"><option value="">Semua Status</option><option>Sedang PKL</option><option>Selesai</option><option>Pending</option><option>Belum Mulai</option></select>
+          </div>
+        </div>
+        <div class="tbl-scroll">
+          <table class="dtbl" id="mhsTable">
+            <thead>
+              <tr>
+                <th><input type="checkbox" id="chkAll" class="chk"></th>
+                <th>NIM</th>
+                <th>Mahasiswa</th>
+                <th>Jurusan</th>
+                <th>Perusahaan</th>
+                <th>Pembimbing</th>
+                <th>Status</th>
+                <th>Progres</th>
+                <th class="th-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="mhsBody"></tbody>
+          </table>
+        </div>
+        <div class="tbl-foot">
+          <span class="tbl-info" id="mhsInfo">Menampilkan semua data</span>
+          <div class="pager" id="mhsPager"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ PAGE: PENGAJUAN ═══════════════════ -->
+    <div class="page" id="page-pengajuan">
+      <div class="pg-head">
+        <div class="pg-head-text">
+          <h1>Pengajuan Masuk</h1>
+          <p>Tinjau dan proses pengajuan PKL yang memerlukan persetujuan</p>
+        </div>
+        <div class="pg-head-actions">
+          <span class="alert-chip"><i class="fa-solid fa-hourglass-half"></i> 12 Menunggu Persetujuan KPS</span>
+        </div>
+      </div>
+      <div class="pengajuan-wrap" id="pengajuanWrap"></div>
+    </div>
+
+    <!-- ═══════════════════ PAGE: LOGBOOK ═══════════════════ -->
+    <div class="page" id="page-logbook">
+      <div class="pg-head">
+        <div class="pg-head-text">
+          <h1>Monitoring Logbook</h1>
+          <p>Pantau pengisian logbook bimbingan dari industri dan kampus</p>
+        </div>
+      </div>
+      <div class="lb-kpi-row">
+        <div class="lb-kpi lb-kpi--blue"><i class="fa-solid fa-book-bookmark"></i><span class="lk-num">1,284</span><span class="lk-lbl">Total Entry</span></div>
+        <div class="lb-kpi lb-kpi--green"><i class="fa-solid fa-check-double"></i><span class="lk-num">1,102</span><span class="lk-lbl">Terverifikasi</span></div>
+        <div class="lb-kpi lb-kpi--amber"><i class="fa-solid fa-clock-rotate-left"></i><span class="lk-num">182</span><span class="lk-lbl">Perlu Review</span></div>
+        <div class="lb-kpi lb-kpi--red"><i class="fa-solid fa-triangle-exclamation"></i><span class="lk-num">5</span><span class="lk-lbl">Lewat Deadline</span></div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <h2 class="card-title">Entri Logbook Terbaru</h2>
+          <div class="tab-pills">
+            <button class="tab-pill active">Semua</button>
+            <button class="tab-pill">Industri</button>
+            <button class="tab-pill">Kampus</button>
+          </div>
+        </div>
+        <div class="lb-list" id="lbList"></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ PAGE: LAPORAN ═══════════════════ -->
+    <div class="page" id="page-laporan">
+      <div class="pg-head">
+        <div class="pg-head-text">
+          <h1>Laporan Akhir PKL</h1>
+          <p>Kelola dan verifikasi laporan akhir yang sudah disubmit mahasiswa</p>
+        </div>
+        <div class="pg-head-actions">
+          <button class="btn btn-ghost" onclick="showExportDialog()"><i class="fa-solid fa-download"></i> Export Semua</button>
+        </div>
+      </div>
+      <div class="laporan-grid" id="laporanGrid"></div>
+    </div>
+
+    <!-- ═══════════════════ PAGE: PENILAIAN ═══════════════════ -->
+    <div class="page" id="page-penilaian">
+      <div class="pg-head">
+        <div class="pg-head-text">
+          <h1>Rekapitulasi Nilai</h1>
+          <p>Kalkulasi nilai akhir PKL — bobot: Industri 50% · Kampus 30% · Industri Pembimbing 20%</p>
+        </div>
+        <div class="pg-head-actions">
+          <button class="btn btn-ghost" onclick="showRichToast('success','Nilai berhasil diekspor ke Excel')"><i class="fa-solid fa-file-excel"></i> Export</button>
+          <button class="btn btn-primary" onclick="runSistemKalkulasi()"><i class="fa-solid fa-calculator"></i> Hitung Ulang</button>
+        </div>
+      </div>
+      <div class="card card-table">
+        <div class="tbl-scroll">
+          <table class="dtbl">
+            <thead>
+              <tr>
+                <th>NIM</th><th>Nama</th><th>Nilai Industri</th><th>Nilai Dosen Kmpus</th><th>Nilai Dosen Ind.</th><th>Nilai Akhir</th><th>Grade</th><th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="nilaiBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ PAGE: SISTEM ═══════════════════ -->
+    <div class="page" id="page-sistem">
+      <div class="pg-head">
+        <div class="pg-head-text">
+          <h1>Log Aktor Sistem</h1>
+          <p>Proses otomasi yang dijalankan sistem — kalkulasi nilai, verifikasi bimbingan, penyimpanan form</p>
+        </div>
+        <div class="pg-head-actions">
+          <button class="btn btn-primary" onclick="runSistemKalkulasi()">
+            <i class="fa-solid fa-play"></i> Jalankan Proses
+          </button>
+        </div>
+      </div>
+
+      <!-- Sistem process cards -->
+      <div class="sistem-proses-grid">
+        <div class="sp-card sp-card--active" onclick="showSistemDetail('kalkulasi')">
+          <div class="sp-status-dot"></div>
+          <div class="sp-icon"><i class="fa-solid fa-calculator"></i></div>
+          <h3>Kalkulasi & Rekapitulasi Nilai Akhir</h3>
+          <p>Menghitung nilai akhir dari semua komponen penilaian secara otomatis</p>
+          <div class="sp-meta"><i class="fa-regular fa-clock"></i> Terakhir: Hari ini 08:00</div>
+        </div>
+        <div class="sp-card" onclick="showSistemDetail('verifikasi')">
+          <div class="sp-status-dot sp-status--idle"></div>
+          <div class="sp-icon"><i class="fa-solid fa-list-check"></i></div>
+          <h3>Verifikasi Jumlah Bimbingan</h3>
+          <p>Memastikan minimal bimbingan terpenuhi sebelum submit laporan akhir</p>
+          <div class="sp-meta"><i class="fa-regular fa-clock"></i> Terakhir: Kemarin 22:00</div>
+        </div>
+        <div class="sp-card" onclick="showSistemDetail('simpan')">
+          <div class="sp-status-dot sp-status--idle"></div>
+          <div class="sp-icon"><i class="fa-solid fa-floppy-disk"></i></div>
+          <h3>Menyimpan Form Pengajuan</h3>
+          <p>Menyimpan dan mengarsipkan form pengajuan yang sudah diproses</p>
+          <div class="sp-meta"><i class="fa-regular fa-clock"></i> Terakhir: 2 hari lalu</div>
+        </div>
+        <div class="sp-card" onclick="showSistemDetail('notif')">
+          <div class="sp-status-dot sp-status--warn"></div>
+          <div class="sp-icon"><i class="fa-solid fa-bell-slash"></i></div>
+          <h3>Notifikasi Deadline Logbook</h3>
+          <p>Mengirim pengingat otomatis ke mahasiswa yang belum mengisi logbook</p>
+          <div class="sp-meta"><i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b"></i> 5 mahasiswa belum mengisi</div>
+        </div>
+      </div>
+
+      <!-- System log terminal -->
+      <div class="card">
+        <div class="card-head">
+          <h2 class="card-title"><i class="fa-solid fa-terminal" style="color:#10b981"></i> System Log</h2>
+          <div class="tab-pills">
+            <button class="tab-pill active">Live</button>
+            <button class="tab-pill">Error</button>
+            <button class="tab-pill">Info</button>
+          </div>
+        </div>
+        <div class="terminal-box" id="terminalBox">
+          <div class="term-line term-info">[2026-10-29 08:00:02] INFO  :: Kalkulasi nilai dimulai untuk 247 mahasiswa...</div>
+          <div class="term-line term-ok">[2026-10-29 08:00:15] OK    :: Berhasil menghitung 198 nilai akhir mahasiswa</div>
+          <div class="term-line term-warn">[2026-10-29 08:00:16] WARN  :: 49 mahasiswa belum melengkapi komponen nilai</div>
+          <div class="term-line term-ok">[2026-10-29 07:55:01] OK    :: Form pengajuan ID-2024-0034 berhasil disimpan</div>
+          <div class="term-line term-ok">[2026-10-29 07:48:33] OK    :: Verifikasi logbook Reza Firmansyah → 8 pertemuan ✓</div>
+          <div class="term-line term-info">[2026-10-29 07:30:00] INFO  :: Cron: Pengecekan deadline logbook mingguan dijalankan</div>
+          <div class="term-line term-err">[2026-10-29 07:30:11] ERROR :: 5 mahasiswa tidak mengisi logbook minggu ke-8</div>
+          <div class="term-line term-ok">[2026-10-29 07:30:12] OK    :: Notifikasi dikirim ke 5 mahasiswa via email</div>
+          <div class="term-line term-ok">[2026-10-28 22:00:00] OK    :: Backup database selesai — 42 MB</div>
+          <div class="term-line term-info">[2026-10-28 18:23:11] INFO  :: KPS Ahmad menyetujui pengajuan Cindy Permata</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ PAGE: INDUSTRI ═══════════════════ -->
+    <div class="page" id="page-industri">
+      <div class="pg-head">
+        <div class="pg-head-text">
+          <h1>Mitra Industri</h1>
+          <p>Perusahaan mitra aktif dalam program PKL Politeknik Negeri Jakarta</p>
+        </div>
+        <div class="pg-head-actions">
+          <button class="btn btn-primary" onclick="openAddIndustriForm()"><i class="fa-solid fa-plus"></i> Tambah Mitra</button>
+        </div>
+      </div>
+      <div class="industri-grid" id="industriGrid"></div>
+    </div>
+
+    <!-- ═══════════════════ PAGE: DOSEN ═══════════════════ -->
+    <div class="page" id="page-dosen">
+      <div class="pg-head">
+        <div class="pg-head-text">
+          <h1>Dosen Pembimbing</h1>
+          <p>Daftar dosen yang bertugas membimbing mahasiswa PKL</p>
+        </div>
+        <div class="pg-head-actions">
+          <button class="btn btn-primary" onclick="openAddDosenForm()"><i class="fa-solid fa-user-plus"></i> Tambah Dosen</button>
+        </div>
+      </div>
+      <div class="dosen-grid" id="dosenGrid"></div>
+    </div>
+
+  </div><!-- /content-area -->
+</div><!-- /main-wrap -->
+
+<!-- ═══════════════ POPUP MODALS ═══════════════ -->
+
+<!-- General Overlay -->
+<div class="popup-overlay" id="popupOverlay"></div>
+
+<!-- Modal: Tambah Mahasiswa -->
+<div class="popup" id="popupAddMhs">
+  <div class="popup-head">
+    <h2><i class="fa-solid fa-user-plus"></i> Tambah Mahasiswa PKL</h2>
+    <button class="popup-x" onclick="closePopup('popupAddMhs')"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="popup-body">
+    <div class="form-row">
+      <div class="form-field">
+        <label>NIM <span class="req">*</span></label>
+        <input type="text" class="finput" id="fNIM" placeholder="4322010xxx">
+      </div>
+      <div class="form-field">
+        <label>Nama Lengkap <span class="req">*</span></label>
+        <input type="text" class="finput" id="fNama" placeholder="Nama sesuai KTP">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Jurusan <span class="req">*</span></label>
+        <select class="finput fsel" id="fJurusan">
+          <option value="">— Pilih Jurusan —</option>
+          <option>Teknik Informatika</option>
+          <option>Teknik Mesin</option>
+          <option>Teknik Sipil</option>
+          <option>Akuntansi</option>
+          <option>Administrasi Bisnis</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Semester</label>
+        <select class="finput fsel">
+          <option>6</option><option>7</option><option>8</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-field">
+      <label>Perusahaan PKL <span class="req">*</span></label>
+      <input type="text" class="finput" id="fPerusahaan" placeholder="Nama perusahaan tempat PKL">
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Dosen Pembimbing</label>
+        <select class="finput fsel">
+          <option value="">— Pilih Dosen —</option>
+          <option>Dr. Ir. Ahmad Setiawan, M.T.</option>
+          <option>Dr. Sari Melati, M.Kom.</option>
+          <option>Dr. Budi Santosa, M.T.</option>
+          <option>Prof. Dr. Hendra Wijaya</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Tanggal Mulai PKL</label>
+        <input type="date" class="finput" value="2026-07-01">
+      </div>
+    </div>
+    <div class="form-field">
+      <label>Keterangan Tambahan</label>
+      <textarea class="finput ftextarea" placeholder="Catatan opsional..."></textarea>
+    </div>
+  </div>
+  <div class="popup-foot">
+    <button class="btn btn-ghost" onclick="closePopup('popupAddMhs')">Batal</button>
+    <button class="btn btn-primary" onclick="submitAddMahasiswa()"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>
+  </div>
+</div>
+
+<!-- Modal: Konfirmasi -->
+<div class="popup popup-sm" id="popupConfirm">
+  <div class="popup-head">
+    <h2 id="confirmTitle">Konfirmasi</h2>
+    <button class="popup-x" onclick="closePopup('popupConfirm')"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="popup-body">
+    <div class="confirm-icon" id="confirmIcon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+    <p id="confirmMsg" class="confirm-msg">Apakah Anda yakin?</p>
+  </div>
+  <div class="popup-foot">
+    <button class="btn btn-ghost" onclick="closePopup('popupConfirm')">Batal</button>
+    <button class="btn btn-danger" id="confirmOkBtn">Ya, Lanjutkan</button>
+  </div>
+</div>
+
+<!-- Modal: Detail Mahasiswa -->
+<div class="popup" id="popupDetailMhs">
+  <div class="popup-head">
+    <h2 id="detailMhsTitle">Detail Mahasiswa</h2>
+    <button class="popup-x" onclick="closePopup('popupDetailMhs')"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="popup-body" id="detailMhsBody"></div>
+  <div class="popup-foot">
+    <button class="btn btn-ghost" onclick="closePopup('popupDetailMhs')">Tutup</button>
+    <button class="btn btn-primary" onclick="showRichToast('info','Membuka form edit mahasiswa...');closePopup('popupDetailMhs')"><i class="fa-solid fa-pen-to-square"></i> Edit Data</button>
+  </div>
+</div>
+
+<!-- Modal: Export -->
+<div class="popup popup-sm" id="popupExport">
+  <div class="popup-head">
+    <h2><i class="fa-solid fa-file-arrow-down"></i> Export Data</h2>
+    <button class="popup-x" onclick="closePopup('popupExport')"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="popup-body">
+    <p class="form-note">Pilih format dan data yang ingin diekspor:</p>
+    <div class="export-opts">
+      <label class="export-opt">
+        <input type="radio" name="exportFmt" value="xlsx" checked> <i class="fa-solid fa-file-excel"></i> Excel (.xlsx)
+      </label>
+      <label class="export-opt">
+        <input type="radio" name="exportFmt" value="pdf"> <i class="fa-solid fa-file-pdf"></i> PDF
+      </label>
+      <label class="export-opt">
+        <input type="radio" name="exportFmt" value="csv"> <i class="fa-solid fa-file-csv"></i> CSV
+      </label>
+    </div>
+    <div class="form-field" style="margin-top:16px">
+      <label>Data yang diekspor</label>
+      <select class="finput fsel">
+        <option>Semua Mahasiswa PKL</option>
+        <option>Rekap Nilai Akhir</option>
+        <option>Logbook Semester Ini</option>
+        <option>Laporan Akhir</option>
+      </select>
+    </div>
+  </div>
+  <div class="popup-foot">
+    <button class="btn btn-ghost" onclick="closePopup('popupExport')">Batal</button>
+    <button class="btn btn-primary" onclick="doExport()"><i class="fa-solid fa-download"></i> Download</button>
+  </div>
+</div>
+
+<!-- Modal: Flow Detail -->
+<div class="popup" id="popupFlow">
+  <div class="popup-head">
+    <h2><i class="fa-solid fa-diagram-project"></i> Detail Alur Proses PKL</h2>
+    <button class="popup-x" onclick="closePopup('popupFlow')"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="popup-body">
+    <div class="flow-steps">
+      <div class="fstep fstep--done"><div class="fstep-num">1</div><div class="fstep-info"><b>Mahasiswa</b> — Mengisi form pengajuan magang</div></div>
+      <div class="fstep-line"></div>
+      <div class="fstep fstep--done"><div class="fstep-num">2</div><div class="fstep-info"><b>KPS</b> — Menyetujui atau menolak pengajuan</div></div>
+      <div class="fstep-line"></div>
+      <div class="fstep fstep--done"><div class="fstep-num">3</div><div class="fstep-info"><b>Admin</b> — Mengelola & menandatangani form</div></div>
+      <div class="fstep-line"></div>
+      <div class="fstep fstep--done"><div class="fstep-num">4</div><div class="fstep-info"><b>Sistem</b> — Menyimpan form & mengirim ke industri</div></div>
+      <div class="fstep-line"></div>
+      <div class="fstep fstep--active"><div class="fstep-num">5</div><div class="fstep-info"><b>Mahasiswa</b> — Mulai magang, input logbook harian</div></div>
+      <div class="fstep-line"></div>
+      <div class="fstep"><div class="fstep-num">6</div><div class="fstep-info"><b>Dosen & Industri</b> — Membimbing & verifikasi logbook</div></div>
+      <div class="fstep-line"></div>
+      <div class="fstep"><div class="fstep-num">7</div><div class="fstep-info"><b>Mahasiswa</b> — Submit laporan akhir PKL</div></div>
+      <div class="fstep-line"></div>
+      <div class="fstep"><div class="fstep-num">8</div><div class="fstep-info"><b>Dosen & Industri</b> — Mengirimkan nilai bimbingan</div></div>
+      <div class="fstep-line"></div>
+      <div class="fstep"><div class="fstep-num">9</div><div class="fstep-info"><b>Sistem</b> — Kalkulasi & rekapitulasi nilai akhir ✓</div></div>
+    </div>
+  </div>
+  <div class="popup-foot">
+    <button class="btn btn-ghost" onclick="closePopup('popupFlow')">Tutup</button>
+    <button class="btn btn-primary" onclick="goToPage('sistem');closePopup('popupFlow')"><i class="fa-solid fa-server"></i> Lihat Log Sistem</button>
+  </div>
+</div>
+
+<!-- Modal: Sistem Process Detail -->
+<div class="popup popup-sm" id="popupSistem">
+  <div class="popup-head">
+    <h2 id="sistemTitle"><i class="fa-solid fa-server"></i> Detail Proses</h2>
+    <button class="popup-x" onclick="closePopup('popupSistem')"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="popup-body" id="sistemBody"></div>
+  <div class="popup-foot">
+    <button class="btn btn-ghost" onclick="closePopup('popupSistem')">Tutup</button>
+    <button class="btn btn-primary" id="sistemRunBtn" onclick="runFromModal()"><i class="fa-solid fa-play"></i> Jalankan</button>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner">
+    <div class="spin-ring"></div>
+    <span id="loadingMsg">Memproses...</span>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -84,6 +84,7 @@ const DB = {
 
 // ── DOM Ready ─────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  initSessionUser();
   setDate();
   initNav();
   initSidebar();
@@ -967,3 +968,41 @@ function appendTerminalLog(text) {
   line.textContent = `[${ts}] ${text}`;
   box.insertBefore(line, box.firstChild);
 }
+
+// ── Session & Auth Integration ─────────────────────
+function initSessionUser() {
+  try {
+    const raw = localStorage.getItem('sipkl_session');
+    if (!raw) return;
+    const session = JSON.parse(raw);
+    const fullnameEl = document.querySelector('.user-fullname');
+    const badgeEl = document.querySelector('.user-badge');
+    const sidebarAva = document.getElementById('sidebarAva');
+    const topAvatar = document.getElementById('topAvatar');
+
+    if (fullnameEl && session.name) fullnameEl.textContent = session.name;
+    if (badgeEl && session.roleName) badgeEl.textContent = session.roleName;
+    if (sidebarAva && session.initials) sidebarAva.textContent = session.initials;
+    if (topAvatar && session.initials) topAvatar.textContent = session.initials;
+  } catch (err) {
+    console.warn('Session parse error:', err);
+  }
+}
+window.initSessionUser = initSessionUser;
+
+function handleLogout() {
+  showConfirmDialog(
+    'Keluar dari sistem?',
+    'Sesi Anda akan diakhiri dan dialihkan kembali ke halaman login utama.',
+    () => {
+      localStorage.removeItem('sipkl_session');
+      showRichToast('info', 'Logout', 'Sesi berhasil diakhiri');
+      setTimeout(() => {
+        window.location.href = '../index.html';
+      }, 600);
+    },
+    'warn'
+  );
+}
+window.handleLogout = handleLogout;
+

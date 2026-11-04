@@ -1,30 +1,27 @@
 'use strict';
 
 /* ══════════════════════════════════════════════════════
-   SiPKL — Modern & Minimalist Authentication Controller
+   SiPKL — Minimalist Authentication Controller
    Politeknik Negeri Jakarta • Frontend Prototype
-   Multi-Role: Super Admin, Admin, Mahasiswa, Dosen, KPS, Kajur, Industri
    ══════════════════════════════════════════════════════ */
 
 const ROLE_CONFIG = {
   super_admin: {
     name: 'Super Admin',
-    label: 'Username / Email Super Admin',
+    label: 'Username atau Email',
     placeholder: 'admin@pnj.ac.id',
     demoUser: 'admin@pnj.ac.id',
     demoPass: 'admin123',
-    demoText: 'admin@pnj.ac.id • admin123',
     initials: 'SA',
     displayName: 'Super Admin PKL',
     redirectUrl: './Super%20Admin%20Page/index.html'
   },
   admin: {
     name: 'Admin PKL',
-    label: 'Username / Email Admin PKL',
+    label: 'Username atau Email',
     placeholder: 'admin.pkl@pnj.ac.id',
     demoUser: 'admin.pkl@pnj.ac.id',
     demoPass: 'admin123',
-    demoText: 'admin.pkl@pnj.ac.id • admin123',
     initials: 'AD',
     displayName: 'Admin PKL',
     redirectUrl: './Super%20Admin%20Page/index.html'
@@ -35,51 +32,46 @@ const ROLE_CONFIG = {
     placeholder: '4322010001',
     demoUser: '4322010001',
     demoPass: 'mhs123',
-    demoText: '4322010001 (Anita) • mhs123',
     initials: 'AW',
     displayName: 'Anita Wijaya',
     redirectUrl: './Super%20Admin%20Page/index.html'
   },
   dosen: {
     name: 'Dosen Pembimbing',
-    label: 'NIP / Email Dosen',
+    label: 'NIP atau Email Dosen',
     placeholder: 'ahmad.s@pnj.ac.id',
     demoUser: 'ahmad.s@pnj.ac.id',
     demoPass: 'dosen123',
-    demoText: 'ahmad.s@pnj.ac.id • dosen123',
     initials: 'AS',
     displayName: 'Dr. Ir. Ahmad Setiawan, M.T.',
     redirectUrl: './Super%20Admin%20Page/index.html'
   },
   kps: {
-    name: 'Ketua Program Studi (KPS)',
+    name: 'Koordinator KPS',
     label: 'Email Resmi KPS',
     placeholder: 'kps.ti@pnj.ac.id',
     demoUser: 'kps.ti@pnj.ac.id',
     demoPass: 'kps123',
-    demoText: 'kps.ti@pnj.ac.id • kps123',
     initials: 'SM',
     displayName: 'Dr. Sari Melati, M.Kom.',
     redirectUrl: './Super%20Admin%20Page/index.html'
   },
   kajur: {
     name: 'Ketua Jurusan',
-    label: 'NIP / Email Ketua Jurusan',
+    label: 'NIP atau Email Ketua Jurusan',
     placeholder: 'kajur.tik@pnj.ac.id',
     demoUser: 'kajur.tik@pnj.ac.id',
     demoPass: 'kajur123',
-    demoText: 'kajur.tik@pnj.ac.id • kajur123',
     initials: 'KJ',
     displayName: 'Prof. Dr. Hendra Wijaya',
     redirectUrl: './Super%20Admin%20Page/index.html'
   },
   industri: {
     name: 'Pembimbing Industri',
-    label: 'Email Mentor / PIC Industri',
+    label: 'Email Mentor Industri',
     placeholder: 'tokopedia@mitra.com',
     demoUser: 'tokopedia@mitra.com',
     demoPass: 'mitra123',
-    demoText: 'tokopedia@mitra.com • mitra123',
     initials: 'TK',
     displayName: 'PT. Tokopedia (Mentor)',
     redirectUrl: './Super%20Admin%20Page/index.html'
@@ -90,13 +82,12 @@ let currentRole = 'super_admin';
 
 document.addEventListener('DOMContentLoaded', () => {
   initRoleSelect();
-  initDemoHelper();
   initPasswordToggle();
   initFormSubmit();
   initModal();
 });
 
-// ── Multi-Role Dropdown Selector ──────────────────────
+// ── Role Select Dropdown ──────────────────────────────
 function initRoleSelect() {
   const select = document.getElementById('roleSelect');
   if (!select) return;
@@ -109,41 +100,20 @@ function initRoleSelect() {
     const cfg = ROLE_CONFIG[role];
     const labelEl = document.getElementById('identifierLabel');
     const inputEl = document.getElementById('userIdentifier');
-    const demoTitleEl = document.getElementById('demoHelperTitle');
-    const demoValEl = document.getElementById('demoHelperVal');
+    const passEl = document.getElementById('userPassword');
 
     if (labelEl) labelEl.textContent = cfg.label;
     if (inputEl) {
       inputEl.placeholder = cfg.placeholder;
       inputEl.value = cfg.demoUser;
     }
-
-    const passEl = document.getElementById('userPassword');
-    if (passEl) passEl.value = cfg.demoPass;
-
-    if (demoTitleEl) demoTitleEl.textContent = `Akun Demo (${cfg.name})`;
-    if (demoValEl) demoValEl.textContent = cfg.demoText;
+    if (passEl) {
+      passEl.value = cfg.demoPass;
+    }
   });
 }
 
-// ── Quick Demo Helper ──────────────────────────────────
-function initDemoHelper() {
-  const btn = document.getElementById('fillDemoBtn');
-  if (!btn) return;
-
-  btn.addEventListener('click', () => {
-    const cfg = ROLE_CONFIG[currentRole];
-    const userEl = document.getElementById('userIdentifier');
-    const passEl = document.getElementById('userPassword');
-
-    if (userEl) userEl.value = cfg.demoUser;
-    if (passEl) passEl.value = cfg.demoPass;
-
-    showToast('success', `Kredensial ${cfg.name} dimasukkan`);
-  });
-}
-
-// ── Password Visibility ────────────────────────────────
+// ── Password Visibility Toggle ────────────────────────
 function initPasswordToggle() {
   const btn = document.getElementById('togglePasswordBtn');
   const passInput = document.getElementById('userPassword');
@@ -152,9 +122,10 @@ function initPasswordToggle() {
     btn.addEventListener('click', () => {
       const isPassword = passInput.type === 'password';
       passInput.type = isPassword ? 'text' : 'password';
-      btn.innerHTML = isPassword
-        ? '<i class="fa-solid fa-eye-slash"></i>'
-        : '<i class="fa-solid fa-eye"></i>';
+      const icon = btn.querySelector('i');
+      if (icon) {
+        icon.className = isPassword ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye';
+      }
     });
   }
 }
@@ -192,12 +163,8 @@ function initFormSubmit() {
     localStorage.setItem('sipkl_session', JSON.stringify(session));
 
     setTimeout(() => {
-      if (btn) btn.classList.remove('loading');
-      showToast('success', `Login berhasil sebagai ${cfg.name}. Mengalihkan...`);
-      setTimeout(() => {
-        window.location.href = cfg.redirectUrl;
-      }, 400);
-    }, 450);
+      window.location.href = cfg.redirectUrl;
+    }, 380);
   });
 }
 
@@ -207,7 +174,7 @@ function showToast(type, text) {
   if (!container) return;
 
   const toast = document.createElement('div');
-  toast.className = `clean-toast toast-${type}`;
+  toast.className = `toast toast-${type}`;
   toast.innerHTML = `
     <i class="fa-solid ${type === 'success' ? 'fa-check' : 'fa-circle-exclamation'}"></i>
     <span>${text}</span>
@@ -217,10 +184,10 @@ function showToast(type, text) {
 
   setTimeout(() => {
     toast.style.opacity = '0';
-    toast.style.transform = 'translateY(8px)';
-    toast.style.transition = 'all 0.25s ease';
-    setTimeout(() => toast.remove(), 250);
-  }, 3200);
+    toast.style.transform = 'translateY(6px)';
+    toast.style.transition = 'all 0.2s ease';
+    setTimeout(() => toast.remove(), 200);
+  }, 2800);
 }
 
 // ── Modal ──────────────────────────────────────────────

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Masuk — SiPKL Politeknik Negeri Jakarta</title>
-  <meta name="description" content="Sistem Informasi Praktik Kerja Lapangan — Politeknik Negeri Jakarta.">
+  <meta name="description" content="Sistem Informasi Praktik Kerja Lapangan Politeknik Negeri Jakarta.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -13,75 +13,77 @@
 </head>
 <body>
 
-  <main class="auth-container">
-    <!-- Header Brand -->
-    <header class="auth-brand">
-      <div class="brand-badge">
-        <div class="brand-icon">
-          <i class="fa-solid fa-graduation-cap"></i>
+  <!-- Subtle noise layer -->
+  <div class="noise-layer"></div>
+
+  <main class="auth-wrap">
+    <div class="auth-card">
+      
+      <!-- Brand Header -->
+      <div class="auth-brand">
+        <div class="brand-mark">
+          <span class="brand-hex">⬡</span>
+          <span class="brand-hex brand-hex--2">⬡</span>
         </div>
-        <div class="brand-titles">
-          <div class="brand-title">SiPKL</div>
-          <div class="brand-sub">Politeknik Negeri Jakarta</div>
+        <div class="brand-text">
+          <span class="brand-name">SiPKL</span>
+          <span class="brand-institute">Politeknik Negeri Jakarta</span>
         </div>
       </div>
-      <h1 class="auth-heading">Masuk ke Akun Anda</h1>
-      <p class="auth-desc">Portal Pengelolaan & Monitoring Laporan PKL</p>
-    </header>
 
-    <!-- Main Card -->
-    <section class="auth-card">
+      <!-- Title -->
+      <div class="auth-header">
+        <h1 class="auth-title">Masuk ke Sistem</h1>
+        <p class="auth-subtitle">Sistem Informasi Praktik Kerja Lapangan</p>
+      </div>
+
       <!-- Login Form -->
-      <form class="auth-form" id="loginForm" autocomplete="on">
+      <form id="loginForm" class="auth-form" autocomplete="on">
         
-        <!-- Multi-Role Dropdown Selector -->
+        <!-- Role Dropdown -->
         <div class="form-group">
-          <label class="form-label" for="roleSelect">Peran / Hak Akses</label>
-          <div class="select-container">
-            <select id="roleSelect" class="auth-input auth-select">
-              <option value="super_admin" selected>🛡️ Super Admin</option>
-              <option value="admin">📋 Admin PKL (Pengelola)</option>
-              <option value="mahasiswa">🎓 Mahasiswa</option>
-              <option value="dosen">👨‍🏫 Dosen Pembimbing</option>
-              <option value="kps">🏛️ Ketua Program Studi (KPS)</option>
-              <option value="kajur">📑 Ketua Jurusan</option>
-              <option value="industri">🏢 Pembimbing Industri (Mitra)</option>
+          <label class="form-label" for="roleSelect">Peran Akses</label>
+          <div class="select-wrap">
+            <select id="roleSelect" class="form-select">
+              <option value="super_admin" selected>Super Admin</option>
+              <option value="admin">Admin PKL</option>
+              <option value="mahasiswa">Mahasiswa</option>
+              <option value="dosen">Dosen Pembimbing</option>
+              <option value="kps">Koordinator KPS</option>
+              <option value="kajur">Ketua Jurusan</option>
+              <option value="industri">Pembimbing Industri</option>
             </select>
-            <i class="fa-solid fa-chevron-down select-chevron"></i>
+            <i class="fa-solid fa-chevron-down select-icon"></i>
           </div>
         </div>
 
-        <!-- Identifier Field -->
+        <!-- Identifier -->
         <div class="form-group">
-          <label class="form-label" for="userIdentifier" id="identifierLabel">
-            Username / Email Super Admin
-          </label>
-          <div class="input-container">
-            <input
-              type="text"
-              id="userIdentifier"
-              class="auth-input"
-              placeholder="admin@pnj.ac.id"
-              value="admin@pnj.ac.id"
-              required
-              autocomplete="username"
-            >
-          </div>
+          <label class="form-label" for="userIdentifier" id="identifierLabel">Username atau Email</label>
+          <input
+            type="text"
+            id="userIdentifier"
+            class="form-input"
+            value="admin@pnj.ac.id"
+            placeholder="admin@pnj.ac.id"
+            required
+            autocomplete="username"
+          >
         </div>
 
-        <!-- Password Field -->
+        <!-- Password -->
         <div class="form-group">
-          <div class="form-label-row">
+          <div class="form-row">
             <label class="form-label" for="userPassword">Kata Sandi</label>
-            <a href="#" class="forgot-link" id="forgotPasswordLink">Lupa sandi?</a>
+            <a href="#" class="form-link" id="forgotPasswordLink">Lupa sandi?</a>
           </div>
-          <div class="input-container">
+          <div class="input-wrap">
             <input
               type="password"
               id="userPassword"
-              class="auth-input has-pwd-btn"
-              placeholder="••••••••"
+              class="form-input has-toggle"
               value="admin123"
+              placeholder="••••••••"
               required
               autocomplete="current-password"
             >
@@ -89,42 +91,31 @@
               type="button"
               class="pwd-toggle"
               id="togglePasswordBtn"
-              aria-label="Tampilkan atau sembunyikan kata sandi"
+              title="Tampilkan sandi"
+              aria-label="Tampilkan sandi"
             >
-              <i class="fa-solid fa-eye"></i>
+              <i class="fa-regular fa-eye"></i>
             </button>
           </div>
         </div>
 
         <!-- Submit Button -->
-        <button type="submit" class="btn-primary" id="submitBtn">
-          <span class="btn-text">Masuk</span>
-          <div class="btn-spinner"></div>
+        <button type="submit" class="submit-btn" id="submitBtn">
+          <span class="btn-label">Masuk</span>
+          <span class="btn-spinner"></span>
         </button>
       </form>
 
-      <!-- Minimal Demo Account Helper -->
-      <div class="demo-helper-box">
-        <div class="demo-helper-info">
-          <span class="demo-helper-title" id="demoHelperTitle">Akun Demo (Super Admin)</span>
-          <span class="demo-helper-val" id="demoHelperVal">admin@pnj.ac.id • admin123</span>
-        </div>
-        <button type="button" class="demo-helper-btn" id="fillDemoBtn">
-          Isi Cepat
-        </button>
+      <!-- Minimal Footnote -->
+      <div class="auth-foot">
+        <span class="auth-hint">Kredensial terisi otomatis untuk pengujian prototipe.</span>
+        <a href="./Super%20Admin%20Page/index.html" class="auth-bypass">Buka dashboard langsung &rarr;</a>
       </div>
+    </div>
 
-      <!-- Direct Admin Shortcut -->
-      <div class="direct-admin-link">
-        <a href="./Super%20Admin%20Page/index.html">
-          Buka Dashboard Super Admin Langsung →
-        </a>
-      </div>
-    </section>
-
-    <!-- Clean Footer -->
-    <footer class="auth-footer">
-      Politeknik Negeri Jakarta • Jurusan Teknik Informatika & Komputer
+    <!-- Page Footer -->
+    <footer class="page-foot">
+      <span>Politeknik Negeri Jakarta &copy; 2026</span>
     </footer>
   </main>
 
@@ -139,7 +130,7 @@
         Untuk mereset kata sandi akun PNJ, silakan gunakan portal Single Sign-On (SSO) resmi Politeknik Negeri Jakarta atau hubungi Unit Pengelola TIK di Gedung Direktorat.
       </p>
       <div class="modal-actions">
-        <button type="button" class="btn-secondary" id="closeForgotBtn">Tutup</button>
+        <button type="button" class="modal-btn" id="closeForgotBtn">Tutup</button>
       </div>
     </div>
   </div>

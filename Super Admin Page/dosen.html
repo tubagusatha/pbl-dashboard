@@ -1,0 +1,2649 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SiPKL Admin — Dosen Pembimbing — Politeknik Negeri Jakarta</title>
+  <meta name="description" content="Sistem Informasi PKL PNJ — Panel Admin untuk monitoring laporan Praktik Kerja Lapangan mahasiswa.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <style>
+/* ══════════════════════════════════════════════════════
+   SiPKL — Admin Dashboard
+   Design: Organic Dark, Human-first, Anti-AI-template
+   ══════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* ── Tokens ───────────────────────────────────────────── */
+:root {
+  --bg:          #0e1117;
+  --bg-2:        #161b25;
+  --bg-3:        #1c2333;
+  --bg-4:        #212840;
+  --line:        rgba(255,255,255,0.07);
+  --line-2:      rgba(255,255,255,0.12);
+
+  --txt:         #e8ecf4;
+  --txt-2:       #7f8ea8;
+  --txt-3:       #4a566b;
+
+  --blue:        #4f8ef7;
+  --blue-dim:    rgba(79,142,247,0.12);
+  --blue-glow:   rgba(79,142,247,0.22);
+  --green:       #34d399;
+  --green-dim:   rgba(52,211,153,0.12);
+  --amber:       #fbbf24;
+  --amber-dim:   rgba(251,191,36,0.12);
+  --violet:      #a78bfa;
+  --violet-dim:  rgba(167,139,250,0.12);
+  --red:         #f87171;
+  --red-dim:     rgba(248,113,113,0.12);
+  --cyan:        #22d3ee;
+
+  --sidebar-w:   248px;
+  --topbar-h:    60px;
+
+  --r-sm:  6px;
+  --r-md:  10px;
+  --r-lg:  16px;
+  --r-xl:  22px;
+
+  --ease: cubic-bezier(0.4,0,0.2,1);
+  --t:    0.2s;
+  --t-lg: 0.35s;
+}
+
+/* ── Reset ────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { height: 100%; }
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--txt);
+  height: 100%;
+  overflow: hidden;
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+a { text-decoration: none; color: inherit; }
+button { cursor: pointer; font-family: inherit; }
+input, select, textarea { font-family: inherit; }
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--bg-4); border-radius: 99px; }
+
+/* ── Noise texture ────────────────────────────────────── */
+.noise-layer {
+  position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px;
+}
+
+/* ── Layout ───────────────────────────────────────────── */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  width: var(--sidebar-w);
+  background: var(--bg-2);
+  border-right: 1px solid var(--line);
+  display: flex; flex-direction: column;
+  z-index: 200;
+  transition: transform var(--t-lg) var(--ease);
+}
+
+.main-wrap {
+  margin-left: var(--sidebar-w);
+  height: 100vh;
+  display: flex; flex-direction: column;
+  transition: margin var(--t-lg) var(--ease);
+  overflow: hidden;
+}
+
+/* ── Sidebar Brand ────────────────────────────────────── */
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 16px;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+}
+
+.brand-mark {
+  width: 34px; height: 34px;
+  position: relative;
+  flex-shrink: 0;
+}
+.brand-hex {
+  position: absolute;
+  font-size: 28px;
+  line-height: 1;
+  top: 0; left: 0;
+  color: var(--blue);
+  opacity: 0.9;
+}
+.brand-hex--2 {
+  font-size: 16px;
+  top: 8px; left: 8px;
+  color: var(--cyan);
+  opacity: 0.7;
+}
+
+.brand-name {
+  display: block;
+  font-size: 15px; font-weight: 800;
+  letter-spacing: -0.3px;
+  color: var(--txt);
+}
+.brand-institute {
+  display: block;
+  font-size: 10px; font-weight: 500;
+  color: var(--txt-3);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+.brand-text { flex: 1; }
+
+.pin-btn {
+  background: none; border: none;
+  color: var(--txt-3); font-size: 12px;
+  padding: 6px; border-radius: var(--r-sm);
+  transition: color var(--t), background var(--t);
+}
+.pin-btn:hover { color: var(--txt); background: var(--bg-3); }
+.pin-btn.pinned { color: var(--blue); }
+
+/* ── Sidenav ──────────────────────────────────────────── */
+.sidebar-body { flex: 1; overflow-y: auto; padding: 10px 8px; }
+
+.sidenav { display: flex; flex-direction: column; gap: 1px; }
+
+.sidenav-section {
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase;
+  color: var(--txt-3);
+  padding: 14px 10px 4px;
+}
+
+.sidenav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 10px;
+  border-radius: var(--r-md);
+  color: var(--txt-2);
+  font-size: 13.5px; font-weight: 500;
+  transition: background var(--t), color var(--t);
+  position: relative;
+  cursor: pointer;
+}
+.sidenav-item:hover { background: var(--bg-3); color: var(--txt); }
+.sidenav-item.active {
+  background: var(--blue-dim);
+  color: var(--blue);
+  font-weight: 600;
+}
+.sidenav-item.active .sni-icon { color: var(--blue); }
+
+.sni-icon {
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  flex-shrink: 0;
+  transition: color var(--t);
+}
+.sidenav-item:hover .sni-icon { color: var(--txt); }
+
+.sni-label { flex: 1; }
+
+.sni-chip {
+  font-size: 10px; font-weight: 700;
+  padding: 2px 7px; border-radius: 99px;
+  background: var(--bg-4);
+  color: var(--txt-2);
+  flex-shrink: 0;
+}
+.sni-chip--alert { background: rgba(251,191,36,0.15); color: var(--amber); }
+.sni-chip--sys { background: rgba(52,211,153,0.15); color: var(--green); font-size: 9px; letter-spacing: 0.5px; }
+
+/* ── Sidebar foot ─────────────────────────────────────── */
+.sidebar-foot {
+  padding: 12px;
+  border-top: 1px solid var(--line);
+}
+.user-card {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px;
+  border-radius: var(--r-md);
+  cursor: pointer;
+  transition: background var(--t);
+}
+.user-card:hover { background: var(--bg-3); }
+
+.user-ava {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue), var(--cyan));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800; color: #fff;
+  flex-shrink: 0;
+}
+.user-fullname { display: block; font-size: 13px; font-weight: 600; }
+.user-badge {
+  display: block; font-size: 10px;
+  color: var(--green);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.user-details { flex: 1; }
+.user-logout {
+  background: none; border: none;
+  color: var(--txt-3); font-size: 13px;
+  padding: 5px;
+  border-radius: var(--r-sm);
+  transition: color var(--t), background var(--t);
+}
+.user-logout:hover { color: var(--red); background: var(--red-dim); }
+
+/* ── Topbar ───────────────────────────────────────────── */
+.topbar {
+  height: var(--topbar-h);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px;
+  background: var(--bg-2);
+  border-bottom: 1px solid var(--line);
+  gap: 16px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 100;
+}
+.topbar-l { display: flex; align-items: center; gap: 14px; }
+.topbar-r { display: flex; align-items: center; gap: 8px; }
+
+.hamburger {
+  display: none;
+  flex-direction: column; gap: 4px;
+  background: none; border: none; padding: 6px;
+  cursor: pointer;
+}
+.hamburger span {
+  display: block; width: 18px; height: 2px;
+  background: var(--txt-2); border-radius: 2px;
+  transition: var(--t);
+}
+
+.crumb {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; color: var(--txt-2);
+}
+.crumb-icon { color: var(--blue); font-size: 12px; }
+.crumb-sep { color: var(--txt-3); }
+.crumb-cur { color: var(--txt); font-weight: 600; }
+
+.top-search {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--bg-3); border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: 7px 12px;
+  width: 260px;
+  transition: border-color var(--t), box-shadow var(--t);
+  cursor: text;
+}
+.top-search:focus-within {
+  border-color: rgba(79,142,247,0.4);
+  box-shadow: 0 0 0 3px rgba(79,142,247,0.08);
+}
+.top-search i { color: var(--txt-3); font-size: 13px; }
+.top-search input {
+  flex: 1; background: none; border: none; outline: none;
+  color: var(--txt); font-size: 13px;
+}
+.top-search input::placeholder { color: var(--txt-3); }
+.top-search kbd {
+  font-size: 10px; color: var(--txt-3);
+  background: var(--bg-4); border: 1px solid var(--line-2);
+  padding: 2px 5px; border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  white-space: nowrap;
+}
+
+.top-btn {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg-3); border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  color: var(--txt-2); font-size: 14px;
+  position: relative; transition: all var(--t);
+}
+.top-btn:hover { background: var(--bg-4); color: var(--txt); border-color: var(--line-2); }
+
+.notif-bubble {
+  position: absolute; top: 5px; right: 5px;
+  min-width: 16px; height: 16px;
+  background: var(--red); border-radius: 99px;
+  font-size: 9px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid var(--bg-2);
+  color: #fff;
+  animation: pulse-notif 2.5s infinite;
+}
+@keyframes pulse-notif {
+  0%,100% { box-shadow: 0 0 0 0 rgba(248,113,113,0.5); }
+  50% { box-shadow: 0 0 0 5px rgba(248,113,113,0); }
+}
+
+.top-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue), var(--cyan));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; color: #fff;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color var(--t);
+}
+.top-avatar:hover { border-color: var(--blue); }
+
+/* ── Notif dropdown ───────────────────────────────────── */
+.notif-drop {
+  position: fixed;
+  top: calc(var(--topbar-h) + 8px);
+  right: 16px;
+  width: 340px;
+  background: var(--bg-3);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-lg);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+  z-index: 300;
+  overflow: hidden;
+  transform: translateY(-8px) scale(0.97);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.22s var(--ease);
+}
+.notif-drop.open {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+  pointer-events: all;
+}
+.nd-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  font-weight: 600; font-size: 13px;
+}
+.nd-clear { background: none; border: none; color: var(--txt-3); font-size: 12px; transition: color var(--t); }
+.nd-clear:hover { color: var(--red); }
+.nd-list { max-height: 320px; overflow-y: auto; }
+.nd-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+  position: relative; transition: background var(--t);
+}
+.nd-item:last-child { border-bottom: none; }
+.nd-item:hover { background: var(--bg-4); }
+.nd-item--new { background: rgba(79,142,247,0.04); }
+.nd-dot {
+  position: absolute; left: 6px; top: 16px;
+  width: 5px; height: 5px;
+  background: var(--blue); border-radius: 50%;
+}
+.nd-ico {
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; flex-shrink: 0;
+}
+.nd-ico--warn { background: var(--amber-dim); color: var(--amber); }
+.nd-ico--ok { background: var(--green-dim); color: var(--green); }
+.nd-ico--sys { background: var(--blue-dim); color: var(--blue); }
+.nd-txt b { display: block; font-size: 12px; font-weight: 600; color: var(--txt); }
+.nd-txt p { font-size: 11px; color: var(--txt-2); margin-top: 1px; }
+.nd-txt time { font-size: 10px; color: var(--txt-3); display: block; margin-top: 3px; }
+
+/* ── Content & Pages ──────────────────────────────────── */
+.content-area {
+  flex: 1; overflow-y: auto;
+  padding: 24px;
+  position: relative;
+}
+
+.page { display: none; animation: pgIn 0.3s var(--ease); }
+.page.active { display: block; }
+
+@keyframes pgIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Page Header ──────────────────────────────────────── */
+.pg-head {
+  display: flex; align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 22px;
+  gap: 16px; flex-wrap: wrap;
+}
+.pg-head h1 {
+  font-size: 22px; font-weight: 800;
+  letter-spacing: -0.5px; line-height: 1.2;
+}
+.pg-head p { font-size: 13px; color: var(--txt-2); margin-top: 3px; }
+.pg-head-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+
+/* ── Buttons ──────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 16px; border-radius: var(--r-md);
+  font-size: 13px; font-weight: 600; border: none;
+  transition: all var(--t); cursor: pointer;
+  white-space: nowrap; font-family: inherit;
+}
+.btn-primary {
+  background: var(--blue);
+  color: #fff;
+  box-shadow: 0 2px 12px rgba(79,142,247,0.3);
+}
+.btn-primary:hover { background: #6ba3ff; box-shadow: 0 4px 20px rgba(79,142,247,0.4); transform: translateY(-1px); }
+.btn-primary:active { transform: translateY(0); }
+.btn-ghost {
+  background: var(--bg-3); color: var(--txt-2);
+  border: 1px solid var(--line);
+}
+.btn-ghost:hover { background: var(--bg-4); color: var(--txt); border-color: var(--line-2); }
+.btn-danger { background: var(--red); color: #fff; box-shadow: 0 2px 12px rgba(248,113,113,0.3); }
+.btn-danger:hover { background: #f97878; }
+.btn-xs { padding: 5px 10px; font-size: 12px; }
+.btn-sm { padding: 7px 13px; font-size: 12px; }
+
+.alert-chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 16px; border-radius: var(--r-md);
+  background: var(--amber-dim); color: var(--amber);
+  border: 1px solid rgba(251,191,36,0.25);
+  font-size: 13px; font-weight: 600;
+}
+
+/* ── Cards ────────────────────────────────────────────── */
+.card {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 20px;
+}
+.card-head {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 12px;
+  margin-bottom: 18px;
+}
+.card-title { font-size: 14px; font-weight: 700; color: var(--txt); }
+.card-sub { font-size: 12px; color: var(--txt-3); margin-top: 2px; }
+
+.mt-4 { margin-top: 16px; }
+.card-table { padding: 0; overflow: hidden; }
+
+/* ── KPI Strip ────────────────────────────────────────── */
+.kpi-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.kpi-card {
+  border-radius: var(--r-lg);
+  padding: 18px;
+  position: relative; overflow: hidden;
+  border: 1px solid var(--line);
+  cursor: default;
+  transition: transform var(--t), box-shadow var(--t);
+}
+.kpi-card:hover { transform: translateY(-2px); }
+
+.kpi-blue  { background: linear-gradient(145deg, rgba(79,142,247,0.08) 0%, var(--bg-2) 60%); border-color: rgba(79,142,247,0.2); }
+.kpi-amber { background: linear-gradient(145deg, rgba(251,191,36,0.08) 0%, var(--bg-2) 60%); border-color: rgba(251,191,36,0.2); }
+.kpi-green { background: linear-gradient(145deg, rgba(52,211,153,0.08) 0%, var(--bg-2) 60%); border-color: rgba(52,211,153,0.2); }
+.kpi-violet{ background: linear-gradient(145deg, rgba(167,139,250,0.08) 0%, var(--bg-2) 60%); border-color: rgba(167,139,250,0.2); }
+
+.kpi-inner { display: flex; align-items: flex-start; justify-content: space-between; }
+
+.kpi-num {
+  display: block;
+  font-size: 36px; font-weight: 800;
+  letter-spacing: -2px; line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.kpi-blue .kpi-num  { color: var(--blue); }
+.kpi-amber .kpi-num { color: var(--amber); }
+.kpi-green .kpi-num { color: var(--green); }
+.kpi-violet .kpi-num{ color: var(--violet); }
+
+.kpi-lbl { display: block; font-size: 12px; font-weight: 600; color: var(--txt-2); margin-top: 4px; }
+.kpi-sub { display: block; font-size: 11px; color: var(--txt-3); margin-top: 6px; }
+
+.kpi-ico {
+  font-size: 22px; opacity: 0.2;
+  align-self: flex-start; margin-top: 2px;
+}
+.kpi-blue .kpi-ico  { color: var(--blue); }
+.kpi-amber .kpi-ico { color: var(--amber); }
+.kpi-green .kpi-ico { color: var(--green); }
+.kpi-violet .kpi-ico{ color: var(--violet); }
+
+.kpi-sparkline {
+  height: 28px; margin-top: 12px;
+}
+.kpi-sparkline svg { width: 100%; height: 100%; }
+.kpi-blue .kpi-sparkline polyline  { stroke: var(--blue); }
+.kpi-amber .kpi-sparkline polyline { stroke: var(--amber); }
+.kpi-green .kpi-sparkline polyline { stroke: var(--green); }
+.kpi-violet .kpi-sparkline polyline{ stroke: var(--violet); }
+
+/* ── Dash Grid ────────────────────────────────────────── */
+.dash-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.dash-col-main { display: flex; flex-direction: column; gap: 14px; }
+.dash-col-side { display: flex; flex-direction: column; gap: 14px; }
+.dash-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+/* ── Chart ────────────────────────────────────────────── */
+.chart-box { height: 220px; position: relative; }
+
+.tab-pills {
+  display: flex; gap: 3px;
+  background: var(--bg-3); border: 1px solid var(--line);
+  padding: 3px; border-radius: var(--r-sm);
+}
+.tab-pill {
+  background: none; border: none;
+  color: var(--txt-2); font-size: 12px; font-weight: 600;
+  padding: 4px 10px; border-radius: 5px;
+  font-family: inherit; cursor: pointer;
+  transition: all var(--t);
+}
+.tab-pill.active { background: var(--blue); color: #fff; }
+
+/* ── Actor Flow ───────────────────────────────────────── */
+.actor-flow {
+  display: flex; align-items: center;
+  gap: 6px; flex-wrap: wrap;
+  padding: 4px 0;
+}
+.actor-node {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 5px; padding: 12px 10px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--line);
+  background: var(--bg-3);
+  flex: 1; min-width: 70px;
+  cursor: pointer; transition: all var(--t);
+  text-align: center;
+}
+.actor-node:hover { border-color: var(--line-2); background: var(--bg-4); transform: translateY(-2px); }
+.an-icon {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.an-label { font-size: 11px; font-weight: 700; color: var(--txt-2); }
+.an-count { font-size: 10px; color: var(--txt-3); }
+
+.node-mhs .an-icon      { background: var(--blue-dim); color: var(--blue); }
+.node-admin .an-icon    { background: var(--violet-dim); color: var(--violet); }
+.node-kps .an-icon      { background: var(--amber-dim); color: var(--amber); }
+.node-dosen .an-icon    { background: var(--green-dim); color: var(--green); }
+.node-industri .an-icon { background: rgba(34,211,238,0.12); color: var(--cyan); }
+.node-sistem .an-icon   { background: rgba(52,211,153,0.12); color: var(--green); }
+
+.flow-arrow { color: var(--txt-3); font-size: 12px; }
+
+/* ── Donut ────────────────────────────────────────────── */
+.donut-area { height: 160px; position: relative; }
+.donut-legend {
+  display: flex; flex-direction: column; gap: 8px;
+  margin-top: 14px;
+}
+.dl-item {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px;
+}
+.dl-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+.dl-name { flex: 1; color: var(--txt-2); }
+.dl-val { font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--txt); }
+
+/* ── Quick Actions ────────────────────────────────────── */
+.quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.qa-btn {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 7px; padding: 14px 8px;
+  border-radius: var(--r-md); border: 1px solid var(--line);
+  background: var(--bg-3);
+  font-size: 11px; font-weight: 600; color: var(--txt-2);
+  font-family: inherit; cursor: pointer;
+  transition: all var(--t);
+  text-align: center;
+}
+.qa-btn:hover { transform: translateY(-2px); border-color: var(--line-2); }
+.qa-btn i { font-size: 18px; }
+.qa-blue:hover  { background: var(--blue-dim); color: var(--blue); border-color: rgba(79,142,247,0.3); }
+.qa-amber:hover { background: var(--amber-dim); color: var(--amber); border-color: rgba(251,191,36,0.3); }
+.qa-green:hover { background: var(--green-dim); color: var(--green); border-color: rgba(52,211,153,0.3); }
+.qa-violet:hover{ background: var(--violet-dim); color: var(--violet); border-color: rgba(167,139,250,0.3); }
+
+/* ── Activity Feed ────────────────────────────────────── */
+.feed { display: flex; flex-direction: column; }
+.feed-item {
+  display: flex; gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+}
+.feed-item:last-child { border-bottom: none; }
+.feed-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  flex-shrink: 0; margin-top: 6px;
+}
+.fd-blue   { background: var(--blue); box-shadow: 0 0 6px var(--blue); }
+.fd-green  { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.fd-amber  { background: var(--amber); box-shadow: 0 0 6px var(--amber); }
+.fd-violet { background: var(--violet); box-shadow: 0 0 6px var(--violet); }
+.fd-red    { background: var(--red); box-shadow: 0 0 6px var(--red); }
+.fd-cyan   { background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
+
+.feed-txt { flex: 1; }
+.feed-actor { font-weight: 700; font-size: 13px; }
+.feed-desc { font-size: 12px; color: var(--txt-2); margin-top: 2px; }
+.feed-time { font-size: 10px; color: var(--txt-3); margin-top: 3px; }
+.feed-badge {
+  font-size: 10px; font-weight: 700;
+  padding: 2px 7px; border-radius: 99px;
+  flex-shrink: 0; align-self: flex-start; margin-top: 2px;
+}
+.fb-blue   { background: var(--blue-dim); color: var(--blue); }
+.fb-green  { background: var(--green-dim); color: var(--green); }
+.fb-amber  { background: var(--amber-dim); color: var(--amber); }
+.fb-red    { background: var(--red-dim); color: var(--red); }
+.fb-violet { background: var(--violet-dim); color: var(--violet); }
+.fb-cyan   { background: rgba(34,211,238,0.12); color: var(--cyan); }
+
+/* ── Score List ───────────────────────────────────────── */
+.score-list { display: flex; flex-direction: column; gap: 8px; }
+.sc-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--r-md);
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  transition: all var(--t);
+  cursor: pointer;
+}
+.sc-item:hover { border-color: var(--line-2); transform: translateX(3px); }
+.sc-rank {
+  width: 24px; height: 24px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800;
+  flex-shrink: 0;
+}
+.rank-1 { background: linear-gradient(135deg,#FFD700,#FFA500); color: #000; }
+.rank-2 { background: linear-gradient(135deg,#C0C0C0,#A0A0A0); color: #000; }
+.rank-3 { background: linear-gradient(135deg,#CD7F32,#B06A1B); color: #fff; }
+.rank-n { background: var(--bg-4); color: var(--txt-3); }
+
+.sc-ava {
+  width: 30px; height: 30px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; color: #fff;
+  flex-shrink: 0;
+}
+.sc-info { flex: 1; }
+.sc-name { font-size: 12px; font-weight: 700; }
+.sc-co   { font-size: 11px; color: var(--txt-3); }
+.sc-score {
+  font-size: 16px; font-weight: 800;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--amber);
+}
+
+/* ── Table ────────────────────────────────────────────── */
+.tbl-toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; border-bottom: 1px solid var(--line);
+  gap: 12px; flex-wrap: wrap;
+}
+.tbl-search {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--bg-3); border: 1px solid var(--line);
+  border-radius: var(--r-md); padding: 7px 12px;
+  min-width: 240px;
+  transition: all var(--t);
+}
+.tbl-search:focus-within { border-color: rgba(79,142,247,0.4); }
+.tbl-search i { color: var(--txt-3); font-size: 12px; }
+.tbl-search input { background: none; border: none; outline: none; color: var(--txt); font-size: 13px; flex: 1; }
+.tbl-controls { display: flex; gap: 8px; }
+
+.sel {
+  background: var(--bg-3); border: 1px solid var(--line);
+  border-radius: var(--r-md); color: var(--txt-2);
+  padding: 7px 10px; font-size: 12px; outline: none;
+  cursor: pointer; transition: border-color var(--t);
+}
+.sel:focus { border-color: rgba(79,142,247,0.4); }
+
+.tbl-scroll { overflow-x: auto; }
+.dtbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+.dtbl thead tr { border-bottom: 1px solid var(--line); }
+.dtbl th {
+  padding: 11px 14px; text-align: left;
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  color: var(--txt-3); white-space: nowrap;
+}
+.th-center { text-align: center; }
+.dtbl td {
+  padding: 13px 14px; border-bottom: 1px solid rgba(255,255,255,0.03);
+  color: var(--txt-2); vertical-align: middle;
+}
+.dtbl tbody tr { transition: background var(--t); }
+.dtbl tbody tr:hover { background: rgba(255,255,255,0.02); }
+.dtbl tbody tr:hover td { color: var(--txt); }
+
+.chk { width: 14px; height: 14px; accent-color: var(--blue); cursor: pointer; }
+
+.mhs-cell { display: flex; align-items: center; gap: 10px; }
+.mhs-ava {
+  width: 30px; height: 30px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 800; color: #fff; flex-shrink: 0;
+}
+.mhs-name { font-weight: 600; color: var(--txt); font-size: 13px; }
+.mhs-email { font-size: 11px; color: var(--txt-3); }
+
+.nim-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--cyan);
+  letter-spacing: 0.3px;
+}
+
+.pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 9px; border-radius: 99px;
+  font-size: 11px; font-weight: 600; white-space: nowrap;
+}
+.pill::before { content:''; width:5px;height:5px;border-radius:50%;background:currentColor; }
+.pill-blue   { background: var(--blue-dim); color: var(--blue); }
+.pill-green  { background: var(--green-dim); color: var(--green); }
+.pill-amber  { background: var(--amber-dim); color: var(--amber); }
+.pill-red    { background: var(--red-dim); color: var(--red); }
+
+.bar-cell { display: flex; align-items: center; gap: 8px; min-width: 100px; }
+.bar-track { flex:1; height:4px; background:rgba(255,255,255,0.06); border-radius:99px; overflow:hidden; }
+.bar-fill { height:100%; border-radius:99px; background: linear-gradient(90deg, var(--blue), var(--cyan)); }
+.bar-pct { font-size:11px; color:var(--txt-3); font-family:'JetBrains Mono',monospace; width:30px; }
+
+.act-btns { display: flex; gap: 5px; justify-content: center; }
+.act-btn {
+  width: 28px; height: 28px; border-radius: 6px;
+  border: 1px solid var(--line); background: var(--bg-3);
+  color: var(--txt-3); font-size: 11px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--t);
+}
+.act-btn:hover { border-color: var(--line-2); color: var(--txt); }
+.act-view:hover { color: var(--blue); border-color: rgba(79,142,247,0.3); }
+.act-edit:hover { color: var(--amber); border-color: rgba(251,191,36,0.3); }
+.act-del:hover  { color: var(--red); border-color: rgba(248,113,113,0.3); background: var(--red-dim); }
+
+.tbl-foot {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 18px; border-top: 1px solid var(--line);
+  flex-wrap: wrap; gap: 10px;
+}
+.tbl-info { font-size: 12px; color: var(--txt-3); }
+.pager { display: flex; gap: 3px; }
+.pager-btn {
+  width: 30px; height: 30px; border-radius: 6px;
+  border: 1px solid var(--line); background: var(--bg-3);
+  color: var(--txt-2); font-size: 12px; font-family: inherit;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all var(--t);
+}
+.pager-btn:hover { background: var(--bg-4); border-color: var(--line-2); }
+.pager-btn.cur { background: var(--blue); border-color: transparent; color: #fff; }
+
+/* ── Pengajuan ────────────────────────────────────────── */
+.pengajuan-wrap { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+.pj-card {
+  background: var(--bg-2); border: 1px solid var(--line);
+  border-radius: var(--r-lg); padding: 18px;
+  transition: all var(--t); position: relative; overflow: hidden;
+}
+.pj-card:hover { border-color: var(--line-2); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+.pj-top { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px; }
+.pj-ava {
+  width: 42px; height: 42px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 800; color: #fff; flex-shrink: 0;
+}
+.pj-name { font-size: 14px; font-weight: 700; }
+.pj-nim { font-size: 11px; color: var(--txt-3); font-family: 'JetBrains Mono', monospace; margin-top: 1px; }
+.pj-status { flex-shrink: 0; }
+
+.pj-info { display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px; }
+.pj-row { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--txt-2); }
+.pj-row i { color: var(--txt-3); width: 14px; text-align: center; }
+
+.pj-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.pj-approve {
+  padding: 8px; border-radius: var(--r-md);
+  background: var(--green-dim); color: var(--green);
+  border: 1px solid rgba(52,211,153,0.3);
+  font-size: 12px; font-weight: 700; font-family: inherit;
+  cursor: pointer; transition: all var(--t);
+}
+.pj-approve:hover { background: var(--green); color: #000; }
+.pj-reject {
+  padding: 8px; border-radius: var(--r-md);
+  background: var(--red-dim); color: var(--red);
+  border: 1px solid rgba(248,113,113,0.3);
+  font-size: 12px; font-weight: 700; font-family: inherit;
+  cursor: pointer; transition: all var(--t);
+}
+.pj-reject:hover { background: var(--red); color: #fff; }
+
+/* ── Logbook ──────────────────────────────────────────── */
+.lb-kpi-row { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+.lb-kpi {
+  flex: 1; min-width: 140px;
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 16px;
+  background: var(--bg-2); border: 1px solid var(--line);
+  border-radius: var(--r-md);
+}
+.lb-kpi i { font-size: 18px; }
+.lb-kpi--blue i { color: var(--blue); }
+.lb-kpi--green i { color: var(--green); }
+.lb-kpi--amber i { color: var(--amber); }
+.lb-kpi--red i { color: var(--red); }
+.lk-num { display: block; font-size: 20px; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
+.lk-lbl { display: block; font-size: 11px; color: var(--txt-2); }
+
+.lb-list { display: flex; flex-direction: column; }
+.lb-entry {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 0; border-bottom: 1px solid var(--line);
+  transition: all var(--t);
+}
+.lb-entry:last-child { border-bottom: none; }
+.lb-entry:hover { background: rgba(255,255,255,0.01); padding-left: 4px; }
+.lb-ava {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; color: #fff; flex-shrink: 0;
+}
+.lb-main { flex: 1; min-width: 0; }
+.lb-name { font-size: 13px; font-weight: 700; }
+.lb-text { font-size: 12px; color: var(--txt-2); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 360px; }
+.lb-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+.lb-date { font-size: 11px; color: var(--txt-3); }
+
+/* ── Laporan ──────────────────────────────────────────── */
+.laporan-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 14px; }
+.lap-card {
+  background: var(--bg-2); border: 1px solid var(--line);
+  border-radius: var(--r-lg); padding: 18px;
+  cursor: pointer; transition: all var(--t);
+}
+.lap-card:hover { border-color: var(--line-2); transform: translateY(-2px); }
+.lap-icon {
+  width: 46px; height: 46px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; margin-bottom: 12px;
+}
+.lap-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; line-height: 1.4; }
+.lap-student { font-size: 11px; color: var(--txt-3); margin-bottom: 14px; }
+.lap-foot { display: flex; justify-content: space-between; align-items: center; }
+.lap-date { font-size: 11px; color: var(--txt-3); }
+.lap-acts { display: flex; gap: 5px; }
+
+/* ── Nilai table pills ────────────────────────────────── */
+.grade-box {
+  width: 26px; height: 26px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800;
+}
+.grade-A { background: var(--green-dim); color: var(--green); }
+.grade-B { background: var(--blue-dim); color: var(--blue); }
+.grade-C { background: var(--amber-dim); color: var(--amber); }
+.grade-D { background: var(--red-dim); color: var(--red); }
+.grade-x { background: var(--bg-4); color: var(--txt-3); }
+
+/* ── Sistem Page ──────────────────────────────────────── */
+.sistem-proses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px; margin-bottom: 16px;
+}
+.sp-card {
+  background: var(--bg-2); border: 1px solid var(--line);
+  border-radius: var(--r-lg); padding: 18px;
+  cursor: pointer; transition: all var(--t); position: relative;
+}
+.sp-card:hover { border-color: var(--line-2); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+.sp-card--active { border-color: rgba(79,142,247,0.3); background: linear-gradient(145deg, rgba(79,142,247,0.05), var(--bg-2)); }
+
+.sp-status-dot {
+  position: absolute; top: 14px; right: 14px;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--green);
+  animation: blink-dot 2s infinite;
+}
+.sp-status--idle { background: var(--txt-3); animation: none; }
+.sp-status--warn { background: var(--amber); }
+@keyframes blink-dot {
+  0%,100% { box-shadow: 0 0 0 0 rgba(52,211,153,0.4); }
+  50% { box-shadow: 0 0 0 4px rgba(52,211,153,0); }
+}
+
+.sp-icon {
+  width: 44px; height: 44px; border-radius: 12px;
+  background: var(--blue-dim); color: var(--blue);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; margin-bottom: 12px;
+}
+.sp-card h3 { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+.sp-card p  { font-size: 12px; color: var(--txt-2); line-height: 1.5; margin-bottom: 12px; }
+.sp-meta { font-size: 11px; color: var(--txt-3); display: flex; align-items: center; gap: 5px; }
+
+/* ── Terminal ─────────────────────────────────────────── */
+.terminal-box {
+  background: #0a0d12; border-radius: var(--r-md);
+  padding: 16px; font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; line-height: 1.8;
+  max-height: 280px; overflow-y: auto;
+}
+.term-line { padding: 1px 0; }
+.term-ok   { color: var(--green); }
+.term-info { color: var(--txt-2); }
+.term-warn { color: var(--amber); }
+.term-err  { color: var(--red); }
+
+/* ── Industri / Dosen grids ───────────────────────────── */
+.industri-grid, .dosen-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 14px;
+}
+.ind-card, .dos-card {
+  background: var(--bg-2); border: 1px solid var(--line);
+  border-radius: var(--r-lg); padding: 18px;
+  cursor: pointer; transition: all var(--t);
+}
+.ind-card:hover, .dos-card:hover { border-color: var(--line-2); transform: translateY(-2px); }
+.ind-logo {
+  width: 46px; height: 46px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; margin-bottom: 12px;
+}
+.ind-name, .dos-name { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+.ind-type, .dos-title { font-size: 11px; color: var(--txt-3); margin-bottom: 14px; }
+.ind-stats { display: flex; gap: 16px; }
+.is-num { display: block; font-size: 18px; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
+.is-lbl { font-size: 11px; color: var(--txt-3); }
+.dos-contact { display: flex; flex-direction: column; gap: 6px; }
+.dos-row { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--txt-2); }
+.dos-row i { color: var(--txt-3); width: 13px; }
+
+/* ── Link more ────────────────────────────────────────── */
+.link-more {
+  font-size: 12px; color: var(--txt-3);
+  transition: color var(--t); white-space: nowrap;
+}
+.link-more:hover { color: var(--blue); }
+
+/* ══════════════════════════════════════════════════════
+   POPUP SYSTEM
+   ══════════════════════════════════════════════════════ */
+.popup-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(6px);
+  z-index: 400;
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--t-lg);
+}
+.popup-overlay.open { opacity: 1; pointer-events: all; }
+
+.popup {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) scale(0.94);
+  width: 90%; max-width: 540px;
+  max-height: 88vh;
+  background: var(--bg-3);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-xl);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+  z-index: 500;
+  display: flex; flex-direction: column;
+  opacity: 0; pointer-events: none;
+  transition: all 0.28s var(--ease);
+}
+.popup.open {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1; pointer-events: all;
+}
+.popup-sm { max-width: 400px; }
+
+.popup-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+.popup-head h2 {
+  font-size: 15px; font-weight: 700;
+  display: flex; align-items: center; gap: 8px;
+}
+.popup-head h2 i { color: var(--blue); }
+.popup-x {
+  background: var(--bg-4); border: 1px solid var(--line);
+  color: var(--txt-2); width: 30px; height: 30px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; transition: all var(--t);
+}
+.popup-x:hover { color: var(--red); border-color: rgba(248,113,113,0.3); }
+
+.popup-body {
+  padding: 20px 22px; overflow-y: auto; flex: 1;
+}
+.popup-foot {
+  display: flex; gap: 8px; justify-content: flex-end;
+  padding: 16px 22px;
+  border-top: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+/* ── Forms ────────────────────────────────────────────── */
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+.form-field label { font-size: 12px; font-weight: 600; color: var(--txt-2); }
+.req { color: var(--red); }
+.finput {
+  background: var(--bg-4); border: 1px solid var(--line);
+  border-radius: var(--r-md); color: var(--txt);
+  padding: 9px 12px; font-size: 13px; outline: none;
+  transition: border-color var(--t), box-shadow var(--t);
+  width: 100%;
+}
+.finput:focus { border-color: rgba(79,142,247,0.5); box-shadow: 0 0 0 3px rgba(79,142,247,0.1); }
+.finput::placeholder { color: var(--txt-3); }
+.fsel { cursor: pointer; }
+.ftextarea { height: 80px; resize: vertical; }
+.form-note { font-size: 12px; color: var(--txt-2); margin-bottom: 12px; }
+
+/* ── Confirm dialog ───────────────────────────────────── */
+.confirm-icon {
+  width: 56px; height: 56px; border-radius: 16px;
+  background: var(--amber-dim); color: var(--amber);
+  font-size: 24px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 14px;
+}
+.confirm-msg { text-align: center; color: var(--txt-2); font-size: 13px; }
+
+/* ── Export options ───────────────────────────────────── */
+.export-opts { display: flex; gap: 8px; }
+.export-opt {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; gap: 6px;
+  padding: 12px; border-radius: var(--r-md);
+  background: var(--bg-4); border: 2px solid var(--line);
+  cursor: pointer; transition: all var(--t);
+  font-size: 12px; font-weight: 600;
+}
+.export-opt input { display: none; }
+.export-opt i { font-size: 22px; }
+.export-opt:has(input:checked) {
+  border-color: var(--blue); background: var(--blue-dim); color: var(--blue);
+}
+
+/* ── Flow steps ───────────────────────────────────────── */
+.flow-steps { display: flex; flex-direction: column; }
+.fstep {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 10px 12px; border-radius: var(--r-md);
+  border: 1px solid var(--line);
+  background: var(--bg-4);
+  font-size: 13px; color: var(--txt-2);
+}
+.fstep--done { background: rgba(52,211,153,0.04); border-color: rgba(52,211,153,0.2); color: var(--txt); }
+.fstep--done .fstep-num { background: var(--green); color: #000; }
+.fstep--active { border-color: rgba(79,142,247,0.35); background: var(--blue-dim); color: var(--txt); }
+.fstep--active .fstep-num { background: var(--blue); color: #fff; }
+.fstep-num {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--bg-3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; flex-shrink: 0;
+}
+.fstep-info b { color: var(--txt); }
+.fstep-line {
+  width: 1px; height: 10px; background: var(--line);
+  margin: 0 0 0 22px;
+}
+
+/* ── Sistem detail ────────────────────────────────────── */
+.sd-meta { display: flex; flex-direction: column; gap: 10px; }
+.sd-row { display: flex; align-items: center; justify-content: space-between; font-size: 13px; }
+.sd-key { color: var(--txt-2); }
+.sd-val { font-weight: 600; }
+
+/* ── Toast ────────────────────────────────────────────── */
+.toast-wrap {
+  position: fixed; bottom: 20px; right: 20px;
+  z-index: 900; display: flex; flex-direction: column; gap: 8px;
+}
+.toast {
+  display: flex; align-items: flex-start; gap: 10px;
+  background: var(--bg-3); border: 1px solid var(--line-2);
+  border-radius: var(--r-md); padding: 12px 16px;
+  min-width: 280px; max-width: 360px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  animation: toastIn 0.3s var(--ease);
+  position: relative; overflow: hidden;
+}
+.toast::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px;
+}
+.toast-ok::before  { background: var(--green); }
+.toast-err::before { background: var(--red); }
+.toast-warn::before { background: var(--amber); }
+.toast-info::before { background: var(--blue); }
+.toast-out { animation: toastOut 0.3s var(--ease) forwards; }
+
+.toast-i { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+.toast-ok .toast-i   { color: var(--green); }
+.toast-err .toast-i  { color: var(--red); }
+.toast-warn .toast-i { color: var(--amber); }
+.toast-info .toast-i { color: var(--blue); }
+
+.toast-body { flex: 1; }
+.toast-title { font-size: 13px; font-weight: 700; color: var(--txt); }
+.toast-msg { font-size: 12px; color: var(--txt-2); margin-top: 2px; }
+.toast-close {
+  background: none; border: none; color: var(--txt-3);
+  font-size: 13px; cursor: pointer; flex-shrink: 0; padding: 2px;
+  transition: color var(--t);
+}
+.toast-close:hover { color: var(--txt); }
+
+.toast-progress {
+  position: absolute; bottom: 0; left: 0;
+  height: 2px; border-radius: 99px;
+  animation: toastProg 3.5s linear forwards;
+}
+.toast-ok .toast-progress   { background: var(--green); }
+.toast-err .toast-progress  { background: var(--red); }
+.toast-warn .toast-progress { background: var(--amber); }
+.toast-info .toast-progress { background: var(--blue); }
+
+@keyframes toastIn  { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes toastOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(110%); opacity: 0; } }
+@keyframes toastProg { from { width: 100%; } to { width: 0; } }
+
+/* ── Loading Overlay ──────────────────────────────────── */
+.loading-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+  z-index: 800;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--t-lg);
+}
+.loading-overlay.active { opacity: 1; pointer-events: all; }
+.loading-spinner {
+  display: flex; flex-direction: column; align-items: center; gap: 16px;
+  font-size: 13px; color: var(--txt-2);
+}
+.spin-ring {
+  width: 48px; height: 48px; border-radius: 50%;
+  border: 3px solid var(--line-2);
+  border-top-color: var(--blue);
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Mobile overlay ───────────────────────────────────── */
+.mob-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 150;
+}
+
+/* ── Responsive ───────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .kpi-strip { grid-template-columns: repeat(2,1fr); }
+  .dash-grid { grid-template-columns: 1fr; }
+  .dash-col-side { display: grid; grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 840px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .mob-overlay.open { display: block; }
+  .main-wrap { margin-left: 0; }
+  .hamburger { display: flex; }
+  .top-search { width: 180px; }
+  .top-search kbd { display: none; }
+  .dash-bottom { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+  .kpi-strip { grid-template-columns: 1fr; }
+  .content-area { padding: 14px; }
+  .topbar { padding: 0 14px; }
+  .top-search { display: none; }
+  .form-row { grid-template-columns: 1fr; }
+  .dash-col-side { grid-template-columns: 1fr; }
+}
+
+  </style>
+</head>
+<body>
+
+<!-- Noise texture overlay -->
+<div class="noise-layer"></div>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-mark">
+      <span class="brand-hex">⬡</span>
+      <span class="brand-hex brand-hex--2">⬡</span>
+    </div>
+    <div class="brand-text">
+      <span class="brand-name">SiPKL</span>
+      <span class="brand-institute">Politeknik Negeri Jakarta</span>
+    </div>
+    <button class="pin-btn" id="pinBtn" title="Pin sidebar">
+      <i class="fa-solid fa-thumbtack"></i>
+    </button>
+  </div>
+
+  <div class="sidebar-body">
+    <nav class="sidenav">
+      <a class="sidenav-item" data-page="dashboard" href="index.html">
+        <span class="sni-icon"><i class="fa-solid fa-house-chimney"></i></span>
+        <span class="sni-label">Beranda</span>
+      </a>
+
+      <div class="sidenav-section">MAHASISWA</div>
+      <a class="sidenav-item" data-page="mahasiswa" href="mahasiswa.html">
+        <span class="sni-icon"><i class="fa-solid fa-user-graduate"></i></span>
+        <span class="sni-label">Data Mahasiswa</span>
+        <span class="sni-chip">247</span>
+      </a>
+      <a class="sidenav-item" data-page="pengajuan" href="pengajuan.html">
+        <span class="sni-icon"><i class="fa-solid fa-inbox"></i></span>
+        <span class="sni-label">Pengajuan Masuk</span>
+        <span class="sni-chip sni-chip--alert">12</span>
+      </a>
+      <a class="sidenav-item" data-page="logbook" href="logbook.html">
+        <span class="sni-icon"><i class="fa-solid fa-book-bookmark"></i></span>
+        <span class="sni-label">Logbook</span>
+      </a>
+
+      <div class="sidenav-section">AKADEMIK</div>
+      <a class="sidenav-item" data-page="laporan" href="laporan.html">
+        <span class="sni-icon"><i class="fa-solid fa-file-contract"></i></span>
+        <span class="sni-label">Laporan Akhir</span>
+      </a>
+      <a class="sidenav-item" data-page="penilaian" href="penilaian.html">
+        <span class="sni-icon"><i class="fa-solid fa-chart-simple"></i></span>
+        <span class="sni-label">Penilaian & Nilai</span>
+      </a>
+      <a class="sidenav-item" data-page="sistem" href="sistem.html">
+        <span class="sni-icon"><i class="fa-solid fa-server"></i></span>
+        <span class="sni-label">Log Sistem</span>
+        <span class="sni-chip sni-chip--sys">SYS</span>
+      </a>
+
+      <div class="sidenav-section">KELOLA</div>
+      <a class="sidenav-item" data-page="industri" href="industri.html">
+        <span class="sni-icon"><i class="fa-solid fa-city"></i></span>
+        <span class="sni-label">Mitra Industri</span>
+      </a>
+      <a class="sidenav-item active" data-page="dosen" href="dosen.html">
+        <span class="sni-icon"><i class="fa-solid fa-person-chalkboard"></i></span>
+        <span class="sni-label">Dosen Pembimbing</span>
+      </a>
+    </nav>
+  </div>
+
+  <div class="sidebar-foot">
+    <div class="user-card">
+      <div class="user-ava" id="sidebarAva">AD</div>
+      <div class="user-details">
+        <span class="user-fullname">Admin PKL</span>
+        <span class="user-badge">Super Admin</span>
+      </div>
+      <button class="user-logout" id="logoutBtn" title="Keluar" onclick="handleLogout()">
+        <i class="fa-solid fa-right-from-bracket"></i>
+      </button>
+    </div>
+  </div>
+</aside>
+
+<!-- Mobile overlay -->
+<div class="mob-overlay" id="mobOverlay"></div>
+
+<!-- Main -->
+<div class="main-wrap" id="mainWrap">
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="topbar-l">
+      <button class="hamburger" id="hamburger">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="crumb" id="crumb">
+        <i class="fa-solid fa-person-chalkboard crumb-icon"></i>
+        <span class="crumb-sep">/</span>
+        <span class="crumb-cur" id="crumbCur">Dosen Pembimbing</span>
+      </div>
+    </div>
+    <div class="topbar-r">
+      <div class="top-search" id="topSearch">
+        <i class="fa-solid fa-search"></i>
+        <input type="text" placeholder="Cari apa saja..." id="globalSearch">
+        <kbd>Ctrl K</kbd>
+      </div>
+      <button class="top-btn notif-trigger" id="notifTrigger">
+        <i class="fa-solid fa-bell"></i>
+        <span class="notif-bubble" id="notifBubble">3</span>
+      </button>
+      <button class="top-btn" id="themeBtn" title="Toggle tema">
+        <i class="fa-solid fa-circle-half-stroke"></i>
+      </button>
+      <div class="top-avatar" id="topAvatar">AD</div>
+    </div>
+  </header>
+
+  <!-- Notif dropdown -->
+  <div class="notif-drop" id="notifDrop">
+    <div class="nd-head">
+      <span>Notifikasi</span>
+      <button class="nd-clear" id="ndClear">Hapus semua</button>
+    </div>
+    <div class="nd-list" id="ndList">
+      <div class="nd-item nd-item--new">
+        <div class="nd-dot"></div>
+        <div class="nd-ico nd-ico--warn"><i class="fa-solid fa-file-circle-plus"></i></div>
+        <div class="nd-txt">
+          <b>Pengajuan baru!</b>
+          <p>Budi Santoso → PT. Telkom Indonesia</p>
+          <time>5 mnt lalu</time>
+        </div>
+      </div>
+      <div class="nd-item nd-item--new">
+        <div class="nd-dot"></div>
+        <div class="nd-ico nd-ico--ok"><i class="fa-solid fa-circle-check"></i></div>
+        <div class="nd-txt">
+          <b>Laporan disetujui</b>
+          <p>Siti Rahayu — Dr. Budi, M.T.</p>
+          <time>1 jam lalu</time>
+        </div>
+      </div>
+      <div class="nd-item">
+        <div class="nd-ico nd-ico--sys"><i class="fa-solid fa-server"></i></div>
+        <div class="nd-txt">
+          <b>Sistem: Kalkulasi nilai selesai</b>
+          <p>198 mahasiswa berhasil direkap</p>
+          <time>3 jam lalu</time>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-area" id="contentArea">
+
+    <div class="page active" id="page-dosen">
+      <div class="pg-head">
+        <div class="pg-head-text">
+          <h1>Dosen Pembimbing</h1>
+          <p>Daftar dosen yang bertugas membimbing mahasiswa PKL</p>
+        </div>
+        <div class="pg-head-actions">
+          <button class="btn btn-primary" onclick="openAddDosenForm()"><i class="fa-solid fa-user-plus"></i> Tambah Dosen</button>
+        </div>
+      </div>
+      <div class="dosen-grid" id="dosenGrid"></div>
+    </div>
+
+  </div><!-- /content-area -->
+</div><!-- /main-wrap -->
+
+<!-- ═══════════════ POPUP MODALS ═══════════════ -->
+
+<!-- General Overlay -->
+<div class="popup-overlay" id="popupOverlay"></div>
+
+<!-- Modal: Tambah Mahasiswa -->
+<div class="popup" id="popupAddMhs">
+  <div class="popup-head">
+    <h2><i class="fa-solid fa-user-plus"></i> Tambah Mahasiswa PKL</h2>
+    <button class="popup-x" onclick="closePopup('popupAddMhs')"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="popup-body">
+    <div class="form-row">
+      <div class="form-field">
+        <label>NIM <span class="req">*</span></label>
+        <input type="text" class="finput" id="fNIM" placeholder="4322010xxx">
+      </div>
+      <div class="form-field">
+        <label>Nama Lengkap <span class="req">*</span></label>
+        <input type="text" class="finput" id="fNama" placeholder="Nama sesuai KTP">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Jurusan <span class="req">*</span></label>
+        <select class="finput fsel" id="fJurusan">
+          <option value="">— Pilih Jurusan —</option>
+          <option>Teknik Informatika</option>
+          <option>Teknik Mesin</option>
+          <option>Teknik Sipil</option>
+          <option>Akuntansi</option>
+          <option>Administrasi Bisnis</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Semester</label>
+        <select class="finput fsel">
+          <option>6</option><option>7</option><option>8</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-field">
+      <label>Perusahaan PKL <span class="req">*</span></label>
+      <input type="text" class="finput" id="fPerusahaan" placeholder="Nama perusahaan tempat PKL">
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Dosen Pembimbing</label>
+        <select class="finput fsel">
+          <option value="">— Pilih Dosen —</option>
+          <option>Dr. Ir. Ahmad Setiawan, M.T.</option>
+          <option>Dr. Sari Melati, M.Kom.</option>
+          <option>Dr. Budi Santosa, M.T.</option>
+          <option>Prof. Dr. Hendra Wijaya</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Tanggal Mulai PKL</label>
+        <input type="date" class="finput" value="2026-07-01">
+      </div>
+    </div>
+    <div class="form-field">
+      <label>Keterangan Tambahan</label>
+      <textarea class="finput ftextarea" placeholder="Catatan opsional..."></textarea>
+    </div>
+  </div>
+  <div class="popup-foot">
+    <button class="btn btn-ghost" onclick="closePopup('popupAddMhs')">Batal</button>
+    <button class="btn btn-primary" onclick="submitAddMahasiswa()"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>
+  </div>
+</div>
+
+<!-- Modal: Konfirmasi -->
+<div class="popup popup-sm" id="popupConfirm">
+  <div class="popup-head">
+    <h2 id="confirmTitle">Konfirmasi</h2>
+    <button class="popup-x" onclick="closePopup('popupConfirm')"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="popup-body">
+    <div class="confirm-icon" id="confirmIcon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+    <p id="confirmMsg" class="confirm-msg">Apakah Anda yakin?</p>
+  </div>
+  <div class="popup-foot">
+    <button class="btn btn-ghost" onclick="closePopup('popupConfirm')">Batal</button>
+    <button class="btn btn-danger" id="confirmOkBtn">Ya, Lanjutkan</button>
+  </div>
+</div>
+
+<!-- Modal: Detail Mahasiswa -->
+<div class="popup" id="popupDetailMhs">
+  <div class="popup-head">
+    <h2 id="detailMhsTitle">Detail Mahasiswa</h2>
+    <button class="popup-x" onclick="closePopup('popupDetailMhs')"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="popup-body" id="detailMhsBody"></div>
+  <div class="popup-foot">
+    <button class="btn btn-ghost" onclick="closePopup('popupDetailMhs')">Tutup</button>
+    <button class="btn btn-primary" onclick="showRichToast('info','Membuka form edit mahasiswa...');closePopup('popupDetailMhs')"><i class="fa-solid fa-pen-to-square"></i> Edit Data</button>
+  </div>
+</div>
+
+<!-- Modal: Export -->
+<div class="popup popup-sm" id="popupExport">
+  <div class="popup-head">
+    <h2><i class="fa-solid fa-file-arrow-down"></i> Export Data</h2>
+    <button class="popup-x" onclick="closePopup('popupExport')"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="popup-body">
+    <p class="form-note">Pilih format dan data yang ingin diekspor:</p>
+    <div class="export-opts">
+      <label class="export-opt">
+        <input type="radio" name="exportFmt" value="xlsx" checked> <i class="fa-solid fa-file-excel"></i> Excel (.xlsx)
+      </label>
+      <label class="export-opt">
+        <input type="radio" name="exportFmt" value="pdf"> <i class="fa-solid fa-file-pdf"></i> PDF
+      </label>
+      <label class="export-opt">
+        <input type="radio" name="exportFmt" value="csv"> <i class="fa-solid fa-file-csv"></i> CSV
+      </label>
+    </div>
+    <div class="form-field" style="margin-top:16px">
+      <label>Data yang diekspor</label>
+      <select class="finput fsel">
+        <option>Semua Mahasiswa PKL</option>
+        <option>Rekap Nilai Akhir</option>
+        <option>Logbook Semester Ini</option>
+        <option>Laporan Akhir</option>
+      </select>
+    </div>
+  </div>
+  <div class="popup-foot">
+    <button class="btn btn-ghost" onclick="closePopup('popupExport')">Batal</button>
+    <button class="btn btn-primary" onclick="doExport()"><i class="fa-solid fa-download"></i> Download</button>
+  </div>
+</div>
+
+<!-- Modal: Flow Detail -->
+<div class="popup" id="popupFlow">
+  <div class="popup-head">
+    <h2><i class="fa-solid fa-diagram-project"></i> Detail Alur Proses PKL</h2>
+    <button class="popup-x" onclick="closePopup('popupFlow')"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="popup-body">
+    <div class="flow-steps">
+      <div class="fstep fstep--done"><div class="fstep-num">1</div><div class="fstep-info"><b>Mahasiswa</b> — Mengisi form pengajuan magang</div></div>
+      <div class="fstep-line"></div>
+      <div class="fstep fstep--done"><div class="fstep-num">2</div><div class="fstep-info"><b>KPS</b> — Menyetujui atau menolak pengajuan</div></div>
+      <div class="fstep-line"></div>
+      <div class="fstep fstep--done"><div class="fstep-num">3</div><div class="fstep-info"><b>Admin</b> — Mengelola & menandatangani form</div></div>
+      <div class="fstep-line"></div>
+      <div class="fstep fstep--done"><div class="fstep-num">4</div><div class="fstep-info"><b>Sistem</b> — Menyimpan form & mengirim ke industri</div></div>
+      <div class="fstep-line"></div>
+      <div class="fstep fstep--active"><div class="fstep-num">5</div><div class="fstep-info"><b>Mahasiswa</b> — Mulai magang, input logbook harian</div></div>
+      <div class="fstep-line"></div>
+      <div class="fstep"><div class="fstep-num">6</div><div class="fstep-info"><b>Dosen & Industri</b> — Membimbing & verifikasi logbook</div></div>
+      <div class="fstep-line"></div>
+      <div class="fstep"><div class="fstep-num">7</div><div class="fstep-info"><b>Mahasiswa</b> — Submit laporan akhir PKL</div></div>
+      <div class="fstep-line"></div>
+      <div class="fstep"><div class="fstep-num">8</div><div class="fstep-info"><b>Dosen & Industri</b> — Mengirimkan nilai bimbingan</div></div>
+      <div class="fstep-line"></div>
+      <div class="fstep"><div class="fstep-num">9</div><div class="fstep-info"><b>Sistem</b> — Kalkulasi & rekapitulasi nilai akhir ✓</div></div>
+    </div>
+  </div>
+  <div class="popup-foot">
+    <button class="btn btn-ghost" onclick="closePopup('popupFlow')">Tutup</button>
+    <button class="btn btn-primary" onclick="goToPage('sistem');closePopup('popupFlow')"><i class="fa-solid fa-server"></i> Lihat Log Sistem</button>
+  </div>
+</div>
+
+<!-- Modal: Sistem Process Detail -->
+<div class="popup popup-sm" id="popupSistem">
+  <div class="popup-head">
+    <h2 id="sistemTitle"><i class="fa-solid fa-server"></i> Detail Proses</h2>
+    <button class="popup-x" onclick="closePopup('popupSistem')"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="popup-body" id="sistemBody"></div>
+  <div class="popup-foot">
+    <button class="btn btn-ghost" onclick="closePopup('popupSistem')">Tutup</button>
+    <button class="btn btn-primary" id="sistemRunBtn" onclick="runFromModal()"><i class="fa-solid fa-play"></i> Jalankan</button>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner">
+    <div class="spin-ring"></div>
+    <span id="loadingMsg">Memproses...</span>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+'use strict';
+/* ════════════════════════════════════════════════
+   SiPKL — Admin App Logic
+   Politeknik Negeri Jakarta
+   Actors: Mahasiswa, Admin, KPS, Ketua Jurusan,
+           Dosen Pembimbing, Industri, SISTEM
+   ════════════════════════════════════════════════ */
+
+// ── Data ─────────────────────────────────────────
+const DB = {
+  mahasiswa: [
+    { nim:'4322010001', nama:'Anita Wijaya',      jur:'Teknik Informatika',   co:'PT. Tokopedia',        dos:'Dr. Ir. Ahmad S.',    st:'Selesai',   prog:100, init:'AW', clr:'#4f8ef7,#22d3ee' },
+    { nim:'4322010002', nama:'Budi Santoso',      jur:'Teknik Informatika',   co:'PT. Telkom Indonesia', dos:'Dr. Sari M.',         st:'Pending',   prog:30,  init:'BS', clr:'#a78bfa,#4f8ef7' },
+    { nim:'4322010003', nama:'Siti Rahayu',       jur:'Administrasi Bisnis',  co:'PT. Bank Mandiri',     dos:'Dr. Budi, M.T.',      st:'Selesai',   prog:100, init:'SR', clr:'#34d399,#22d3ee' },
+    { nim:'4322010004', nama:'Reza Firmansyah',   jur:'Teknik Mesin',         co:'PT. Astra Intl.',      dos:'Prof. Hendra',        st:'Sedang PKL',prog:65,  init:'RF', clr:'#fbbf24,#f87171' },
+    { nim:'4322010005', nama:'Dewi Susanti',      jur:'Akuntansi',            co:'PT. Bank BRI',         dos:'Dr. Sari M.',         st:'Selesai',   prog:100, init:'DS', clr:'#a78bfa,#34d399' },
+    { nim:'4322010006', nama:'Muhammad Farhan',   jur:'Teknik Informatika',   co:'PT. Gojek',            dos:'Dr. Ir. Ahmad S.',    st:'Sedang PKL',prog:78,  init:'MF', clr:'#f87171,#fbbf24' },
+    { nim:'4322010007', nama:'Rio Prasetyo',      jur:'Teknik Sipil',         co:'PT. Pertamina',        dos:'Prof. Hendra',        st:'Sedang PKL',prog:55,  init:'RP', clr:'#22d3ee,#4f8ef7' },
+    { nim:'4322010008', nama:'Laila Putri',       jur:'Teknik Informatika',   co:'PT. PLN',              dos:'Dr. Budi, M.T.',      st:'Sedang PKL',prog:72,  init:'LP', clr:'#a78bfa,#fbc2eb' },
+    { nim:'4322010009', nama:'Arif Nugroho',      jur:'Teknik Mesin',         co:'PT. Toyota Astra',     dos:'Prof. Hendra',        st:'Belum Mulai',prog:0,  init:'AN', clr:'#34d399,#4f8ef7' },
+    { nim:'4322010010', nama:'Nadia Sari',        jur:'Administrasi Bisnis',  co:'PT. Unilever',         dos:'Dr. Sari M.',         st:'Sedang PKL',prog:48,  init:'NS', clr:'#fbbf24,#f87171' },
+  ],
+  pengajuan: [
+    { nama:'Budi Santoso',    nim:'4322010002', jur:'Teknik Informatika',  co:'PT. Telkom Indonesia',   pos:'IT Support Intern',         tgl:'28 Okt 2026', init:'BS', clr:'#4f8ef7,#22d3ee' },
+    { nama:'Arif Nugroho',    nim:'4322010009', jur:'Teknik Mesin',        co:'PT. Toyota Astra Motor', pos:'Manufacturing Intern',      tgl:'27 Okt 2026', init:'AN', clr:'#34d399,#22d3ee' },
+    { nama:'Cindy Permata',   nim:'4322010015', jur:'Teknik Informatika',  co:'PT. Shopee Indonesia',   pos:'Backend Developer Intern',  tgl:'27 Okt 2026', init:'CP', clr:'#f87171,#fbbf24' },
+    { nama:'Doni Kurniawan',  nim:'4322010018', jur:'Akuntansi',           co:'KAP Ernst & Young',      pos:'Audit Intern',              tgl:'26 Okt 2026', init:'DK', clr:'#a78bfa,#4f8ef7' },
+    { nama:'Eka Rahmawati',   nim:'4322010021', jur:'Administrasi Bisnis', co:'PT. Garuda Indonesia',   pos:'HR Intern',                 tgl:'26 Okt 2026', init:'ER', clr:'#fbbf24,#f87171' },
+    { nama:'Fajar Aditya',    nim:'4322010024', jur:'Teknik Sipil',        co:'PT. Waskita Karya',      pos:'Site Engineer Intern',      tgl:'25 Okt 2026', init:'FA', clr:'#22d3ee,#4f8ef7' },
+  ],
+  logbook: [
+    { nama:'Reza Firmansyah', init:'RF', clr:'#fbbf24,#f87171', ket:'Analisis kebutuhan sistem modul inventory perusahaan',                   tgl:'29 Okt 2026', tipe:'Industri', ok:false },
+    { nama:'Muhammad Farhan', init:'MF', clr:'#f87171,#fbbf24', ket:'Rapat bimbingan kampus — progress laporan bab 3',                        tgl:'29 Okt 2026', tipe:'Kampus',   ok:true  },
+    { nama:'Laila Putri',     init:'LP', clr:'#a78bfa,#fbc2eb', ket:'Testing dan debugging aplikasi web e-commerce internal',                 tgl:'28 Okt 2026', tipe:'Industri', ok:true  },
+    { nama:'Nadia Sari',      init:'NS', clr:'#fbbf24,#f87171', ket:'Pembuatan laporan mingguan & dokumentasi proses bisnis',                 tgl:'28 Okt 2026', tipe:'Kampus',   ok:false },
+    { nama:'Rio Prasetyo',    init:'RP', clr:'#22d3ee,#4f8ef7', ket:'Survei lapangan proyek konstruksi jembatan — Bekasi Barat',              tgl:'27 Okt 2026', tipe:'Industri', ok:true  },
+    { nama:'Anita Wijaya',    init:'AW', clr:'#4f8ef7,#22d3ee', ket:'Presentasi hasil PKL kepada pembimbing industri & tim manajemen',       tgl:'26 Okt 2026', tipe:'Industri', ok:true  },
+  ],
+  laporan: [
+    { judul:'Pengembangan Sistem Informasi Inventory Berbasis Web', mhs:'Anita Wijaya',    nim:'4322010001', tgl:'20 Okt 2026',     st:'Disetujui', clr:'#4f8ef7,#22d3ee' },
+    { judul:'Analisis Perancangan Sistem Rekrutmen Digital',        mhs:'Siti Rahayu',     nim:'4322010003', tgl:'18 Okt 2026',     st:'Disetujui', clr:'#34d399,#22d3ee' },
+    { judul:'Implementasi Machine Learning untuk Anomali Detection', mhs:'Muhammad Farhan', nim:'4322010006', tgl:'15 Okt 2026',     st:'Review',    clr:'#f87171,#fbbf24' },
+    { judul:'Perancangan Audit Internal Berbasis Sistem Digital',   mhs:'Dewi Susanti',    nim:'4322010005', tgl:'12 Okt 2026',     st:'Disetujui', clr:'#a78bfa,#34d399' },
+    { judul:'Optimasi Proses Produksi dengan Lean Manufacturing',   mhs:'Reza Firmansyah', nim:'4322010004', tgl:'Belum Submit',    st:'Pending',   clr:'#fbbf24,#f87171' },
+    { judul:'Studi Kelayakan Proyek Konstruksi Jembatan Tipe T',   mhs:'Rio Prasetyo',    nim:'4322010007', tgl:'Belum Submit',    st:'Pending',   clr:'#22d3ee,#4f8ef7' },
+  ],
+  nilai: [
+    { nim:'4322010001', nama:'Anita Wijaya',    ni:96, nk:95, ndi:97, akhir:95.8, grade:'A' },
+    { nim:'4322010006', nama:'Muhammad Farhan', ni:93, nk:95, ndi:94, akhir:94.2, grade:'A' },
+    { nim:'4322010005', nama:'Dewi Susanti',    ni:92, nk:94, ndi:93, akhir:92.7, grade:'A' },
+    { nim:'4322010007', nama:'Rio Prasetyo',    ni:91, nk:92, ndi:91, akhir:91.5, grade:'A' },
+    { nim:'4322010008', nama:'Laila Putri',     ni:90, nk:91, ndi:92, akhir:90.9, grade:'A' },
+    { nim:'4322010003', nama:'Siti Rahayu',     ni:88, nk:90, ndi:87, akhir:88.4, grade:'B' },
+    { nim:'4322010010', nama:'Nadia Sari',      ni:85, nk:87, ndi:84, akhir:85.4, grade:'B' },
+    { nim:'4322010004', nama:'Reza Firmansyah', ni:0,  nk:0,  ndi:0,  akhir:0,    grade:'-' },
+  ],
+  industri: [
+    { nama:'PT. Telkom Indonesia',   tipe:'BUMN — Telekomunikasi', mhs:18, icon:'fa-satellite-dish', clr:'#f87171,#fbbf24' },
+    { nama:'PT. Tokopedia',          tipe:'Swasta — E-Commerce',   mhs:15, icon:'fa-cart-shopping',  clr:'#4f8ef7,#22d3ee' },
+    { nama:'PT. Gojek',              tipe:'Swasta — Teknologi',    mhs:12, icon:'fa-motorcycle',     clr:'#34d399,#22d3ee' },
+    { nama:'PT. Bank BRI',           tipe:'BUMN — Perbankan',      mhs:22, icon:'fa-landmark',       clr:'#a78bfa,#4f8ef7' },
+    { nama:'PT. Pertamina',          tipe:'BUMN — Energi',         mhs:10, icon:'fa-gas-pump',       clr:'#fbbf24,#f87171' },
+    { nama:'PT. Astra International',tipe:'Swasta — Otomotif',     mhs:14, icon:'fa-car',            clr:'#22d3ee,#4f8ef7' },
+    { nama:'PT. PLN (Persero)',      tipe:'BUMN — Listrik',        mhs:9,  icon:'fa-bolt',           clr:'#a78bfa,#34d399' },
+    { nama:'KAP Ernst & Young',      tipe:'Swasta — Konsultasi',   mhs:7,  icon:'fa-chart-line',     clr:'#f87171,#a78bfa' },
+  ],
+  dosen: [
+    { nama:'Dr. Ir. Ahmad Setiawan, M.T.', bid:'Teknik Informatika',  email:'ahmad.s@pnj.ac.id', tlp:'+62812-0001-0001', mhs:12, init:'AS', clr:'#4f8ef7,#22d3ee' },
+    { nama:'Dr. Sari Melati, M.Kom.',      bid:'Sistem Informasi',    email:'sari.m@pnj.ac.id',  tlp:'+62812-0001-0002', mhs:15, init:'SM', clr:'#34d399,#22d3ee' },
+    { nama:'Dr. Budi Santosa, M.T.',       bid:'Teknik Mesin',        email:'budi.s@pnj.ac.id',  tlp:'+62812-0001-0003', mhs:10, init:'BS', clr:'#fbbf24,#f87171' },
+    { nama:'Prof. Dr. Hendra Wijaya',      bid:'Teknik Sipil',        email:'hendra.w@pnj.ac.id',tlp:'+62812-0001-0004', mhs:18, init:'HW', clr:'#a78bfa,#4f8ef7' },
+    { nama:'Dr. Rina Dewi, M.Ak.',         bid:'Akuntansi',           email:'rina.d@pnj.ac.id',  tlp:'+62812-0001-0005', mhs:11, init:'RD', clr:'#f87171,#fbbf24' },
+    { nama:'Dr. Farida Hanum, M.M.',       bid:'Administrasi Bisnis', email:'farida.h@pnj.ac.id',tlp:'+62812-0001-0006', mhs:9,  init:'FH', clr:'#a78bfa,#34d399' },
+  ],
+  feed: [
+    { actor:'Budi Santoso',       desc:'Mengajukan form PKL ke PT. Telkom Indonesia',            dot:'fd-blue',   badge:'Pengajuan', bc:'fb-blue',   time:'09:32 WIB' },
+    { actor:'Siti Rahayu',        desc:'Laporan akhir diverifikasi oleh Dr. Budi, M.T.',          dot:'fd-green',  badge:'Selesai',   bc:'fb-green',  time:'08:15 WIB' },
+    { actor:'Reza Firmansyah',    desc:'Menginput logbook bimbingan industri — minggu ke-8',      dot:'fd-amber',  badge:'Logbook',   bc:'fb-amber',  time:'07:48 WIB' },
+    { actor:'PT. Gojek (Industri)',desc:'Mengirimkan nilai bimbingan 3 mahasiswa ke sistem',      dot:'fd-cyan',   badge:'Nilai',     bc:'fb-cyan',   time:'07:10 WIB' },
+    { actor:'Sistem (OTOMATIS)',  desc:'Kalkulasi 198 nilai akhir berhasil dikerjakan',           dot:'fd-green',  badge:'Sistem',    bc:'fb-green',  time:'08:00 WIB' },
+    { actor:'Sistem (OTOMATIS)',  desc:'5 mahasiswa mendapat peringatan deadline logbook',        dot:'fd-red',    badge:'Alert',     bc:'fb-red',    time:'00:00 WIB' },
+  ],
+};
+
+// ── DOM Ready ─────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  initSessionUser();
+  setDate();
+  initNav();
+  initSidebar();
+  initSearch();
+  initNotif();
+  buildDashboard();
+  buildMahasiswaTable();
+  buildPengajuan();
+  buildLogbook();
+  buildLaporan();
+  buildNilai();
+  buildIndustri();
+  buildDosen();
+  animateCounters();
+});
+
+// ── Date ──────────────────────────────────────────
+function setDate() {
+  const el = document.getElementById('todayDate');
+  if (el) el.textContent = new Date().toLocaleDateString('id-ID', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+}
+
+// ── Navigation ────────────────────────────────────
+const PAGE_LABELS = {
+  dashboard:'Beranda', mahasiswa:'Data Mahasiswa', pengajuan:'Pengajuan Masuk',
+  logbook:'Monitoring Logbook', laporan:'Laporan Akhir', penilaian:'Penilaian & Nilai',
+  sistem:'Log Sistem', industri:'Mitra Industri', dosen:'Dosen Pembimbing',
+};
+
+function initNav() {
+  document.querySelectorAll('.sidenav-item[data-page]').forEach(item => {
+    item.addEventListener('click', e => {
+      e.preventDefault();
+      goToPage(item.dataset.page);
+    });
+  });
+}
+
+const PAGE_URLS = {
+  dashboard: 'index.html',
+  mahasiswa: 'mahasiswa.html',
+  pengajuan: 'pengajuan.html',
+  logbook: 'logbook.html',
+  laporan: 'laporan.html',
+  penilaian: 'penilaian.html',
+  sistem: 'sistem.html',
+  industri: 'industri.html',
+  dosen: 'dosen.html',
+};
+
+function goToPage(id) {
+  const target = PAGE_URLS[id] || (id ? id + '.html' : 'index.html');
+  if (target) {
+    const currentFile = window.location.pathname.split('/').pop() || 'index.html';
+    if (currentFile !== target) {
+      window.location.href = target;
+    }
+  }
+}
+window.goToPage = goToPage;
+window.goToPage = goToPage;
+
+// ── Sidebar (mobile) ──────────────────────────────
+function initSidebar() {
+  const ham = document.getElementById('hamburger');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('mobOverlay');
+
+  if (ham) ham.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('open');
+  });
+  if (overlay) overlay.addEventListener('click', closeMobileSidebar);
+}
+
+function closeMobileSidebar() {
+  document.getElementById('sidebar')?.classList.remove('open');
+  document.getElementById('mobOverlay')?.classList.remove('open');
+}
+
+// ── Search shortcut ───────────────────────────────
+function initSearch() {
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+      e.preventDefault();
+      document.getElementById('globalSearch')?.focus();
+    }
+    if (e.key === 'Escape') {
+      document.getElementById('globalSearch')?.blur();
+      closeAllPopups();
+    }
+  });
+}
+
+// ── Notifications ──────────────────────────────────
+function initNotif() {
+  const btn = document.getElementById('notifTrigger');
+  const drop = document.getElementById('notifDrop');
+
+  btn?.addEventListener('click', e => {
+    e.stopPropagation();
+    drop.classList.toggle('open');
+  });
+
+  document.addEventListener('click', e => {
+    if (!drop?.contains(e.target) && e.target !== btn) drop?.classList.remove('open');
+  });
+
+  document.getElementById('ndClear')?.addEventListener('click', () => {
+    const ndList = document.getElementById('ndList');
+    ndList.innerHTML = `<div style="padding:20px;text-align:center;color:var(--txt-3);font-size:13px;"><i class="fa-regular fa-bell-slash" style="font-size:24px;display:block;margin-bottom:8px;"></i>Tidak ada notifikasi</div>`;
+    const bubble = document.getElementById('notifBubble');
+    if (bubble) bubble.style.display = 'none';
+    showRichToast('ok', 'Notifikasi', 'Semua notifikasi telah dihapus');
+  });
+}
+
+// ── Counter Animation ─────────────────────────────
+function animateCounters() {
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const target = parseInt(el.dataset.count);
+        let start = 0;
+        const dur = 1200;
+        const t0 = performance.now();
+        const ease = t => 1 - Math.pow(1-t, 3);
+        const tick = now => {
+          const p = Math.min((now - t0) / dur, 1);
+          el.textContent = Math.round(start + target * ease(p)).toLocaleString('id-ID');
+          if (p < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+        obs.unobserve(el);
+      }
+    });
+  }, { threshold: 0.3 });
+  document.querySelectorAll('[data-count]').forEach(el => obs.observe(el));
+}
+
+// ── Charts ─────────────────────────────────────────
+function buildDashboard() {
+  buildLineChart();
+  buildDonut();
+  buildFeed();
+  buildScores();
+}
+
+function buildLineChart() {
+  const ctx = document.getElementById('lineChart');
+  if (!ctx) return;
+
+  const cfg = {
+    labels: ['Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt'],
+    ds: [
+      { label:'Pengajuan', data:[32,45,38,60,54,70], color:'#4f8ef7' },
+      { label:'Selesai',   data:[18,30,25,48,42,58], color:'#34d399' },
+    ]
+  };
+
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: cfg.labels,
+      datasets: cfg.ds.map(d => ({
+        label: d.label,
+        data: d.data,
+        borderColor: d.color,
+        backgroundColor: d.color + '18',
+        borderWidth: 2,
+        pointBackgroundColor: d.color,
+        pointBorderColor: '#161b25',
+        pointBorderWidth: 2,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        fill: true, tension: 0.45,
+      })),
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { color:'#7f8ea8', font:{ family:'Plus Jakarta Sans', size:12 }, usePointStyle:true, pointStyleWidth:8 } },
+        tooltip: { backgroundColor:'#1c2333', borderColor:'rgba(255,255,255,0.1)', borderWidth:1, titleColor:'#e8ecf4', bodyColor:'#7f8ea8', padding:12, cornerRadius:8 },
+      },
+      scales: {
+        x: { grid:{ color:'rgba(255,255,255,0.04)' }, ticks:{ color:'#4a566b', font:{ family:'Plus Jakarta Sans', size:11 } }, border:{ display:false } },
+        y: { grid:{ color:'rgba(255,255,255,0.04)' }, ticks:{ color:'#4a566b', font:{ family:'Plus Jakarta Sans', size:11 } }, border:{ display:false } },
+      },
+      interaction: { mode:'index', intersect:false },
+    },
+  });
+
+  // Tab filter
+  document.getElementById('chartTabs')?.querySelectorAll('.tab-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.getElementById('chartTabs').querySelectorAll('.tab-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+}
+
+function buildDonut() {
+  const ctx = document.getElementById('donutChart');
+  const legend = document.getElementById('donutLegend');
+  if (!ctx) return;
+
+  const items = [
+    { label:'Sedang PKL', val:142, color:'#4f8ef7' },
+    { label:'Selesai',    val:68,  color:'#34d399' },
+    { label:'Pending',    val:25,  color:'#fbbf24' },
+    { label:'Belum Mulai',val:12,  color:'#f87171' },
+  ];
+
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: items.map(i => i.label),
+      datasets: [{ data: items.map(i => i.val), backgroundColor: items.map(i => i.color), borderColor:'#161b25', borderWidth:3, hoverOffset:6 }],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout:'72%',
+      plugins: {
+        legend: { display:false },
+        tooltip: { backgroundColor:'#1c2333', borderColor:'rgba(255,255,255,0.1)', borderWidth:1, titleColor:'#e8ecf4', bodyColor:'#7f8ea8', padding:12, cornerRadius:8 },
+      },
+    },
+  });
+
+  if (legend) {
+    items.forEach(it => {
+      const div = document.createElement('div');
+      div.className = 'dl-item';
+      div.innerHTML = `<div class="dl-dot" style="background:${it.color}"></div><span class="dl-name">${it.label}</span><span class="dl-val">${it.val}</span>`;
+      legend.appendChild(div);
+    });
+  }
+}
+
+function buildFeed() {
+  const el = document.getElementById('dashFeed');
+  if (!el) return;
+  DB.feed.forEach(f => {
+    const d = document.createElement('div');
+    d.className = 'feed-item';
+    d.innerHTML = `
+      <div class="feed-dot ${f.dot}"></div>
+      <div class="feed-txt">
+        <div class="feed-actor">${f.actor}</div>
+        <div class="feed-desc">${f.desc}</div>
+        <div class="feed-time">${f.time}</div>
+      </div>
+      <span class="feed-badge ${f.bc}">${f.badge}</span>
+    `;
+    el.appendChild(d);
+  });
+}
+
+function buildScores() {
+  const el = document.getElementById('dashScores');
+  if (!el) return;
+  const top5 = DB.nilai.filter(n => n.akhir > 0).slice(0, 5);
+  top5.forEach((n, i) => {
+    const ranks = ['rank-1','rank-2','rank-3','rank-n','rank-n'];
+    const div = document.createElement('div');
+    div.className = 'sc-item';
+    div.onclick = () => showRichToast('info', n.nama, `Nilai akhir: ${n.akhir} — Grade ${n.grade}`);
+    div.innerHTML = `
+      <div class="sc-rank ${ranks[i]}">${i+1}</div>
+      <div class="sc-ava" style="background:linear-gradient(135deg,${DB.mahasiswa.find(m=>m.nim===n.nim)?.clr||'#4f8ef7,#22d3ee'})">${n.nama.split(' ').map(w=>w[0]).join('').slice(0,2)}</div>
+      <div class="sc-info"><div class="sc-name">${n.nama}</div><div class="sc-co">${DB.mahasiswa.find(m=>m.nim===n.nim)?.co||''}</div></div>
+      <div class="sc-score">${n.akhir.toFixed(1)}</div>
+    `;
+    el.appendChild(div);
+  });
+}
+
+// ── Mahasiswa Table ───────────────────────────────
+function buildMahasiswaTable() {
+  const tbody = document.getElementById('mhsBody');
+  if (!tbody) return;
+
+  const pillMap = { 'Sedang PKL':'pill-blue', 'Selesai':'pill-green', 'Pending':'pill-amber', 'Belum Mulai':'pill-red' };
+
+  DB.mahasiswa.forEach((m, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input type="checkbox" class="chk"></td>
+      <td><span class="nim-tag">${m.nim}</span></td>
+      <td>
+        <div class="mhs-cell">
+          <div class="mhs-ava" style="background:linear-gradient(135deg,${m.clr})">${m.init}</div>
+          <div>
+            <div class="mhs-name">${m.nama}</div>
+            <div class="mhs-email">${m.nim.toLowerCase()}@mhs.pnj.ac.id</div>
+          </div>
+        </div>
+      </td>
+      <td>${m.jur}</td>
+      <td>${m.co}</td>
+      <td>${m.dos}</td>
+      <td><span class="pill ${pillMap[m.st]||'pill-amber'}">${m.st}</span></td>
+      <td>
+        <div class="bar-cell">
+          <div class="bar-track"><div class="bar-fill" style="width:${m.prog}%"></div></div>
+          <span class="bar-pct">${m.prog}%</span>
+        </div>
+      </td>
+      <td>
+        <div class="act-btns">
+          <button class="act-btn act-view" title="Detail" data-i="${i}"><i class="fa-solid fa-eye"></i></button>
+          <button class="act-btn act-edit" title="Edit" data-i="${i}"><i class="fa-solid fa-pen"></i></button>
+          <button class="act-btn act-del" title="Hapus" data-i="${i}"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // Row actions
+  tbody.addEventListener('click', e => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    const i = parseInt(btn.dataset.i);
+    const m = DB.mahasiswa[i];
+    if (btn.classList.contains('act-view')) openDetailMhs(m);
+    if (btn.classList.contains('act-edit')) showRichToast('info', 'Edit Mahasiswa', `Membuka form edit untuk ${m.nama}...`);
+    if (btn.classList.contains('act-del')) {
+      showConfirmDialog(`Hapus data ${m.nama}?`, 'Data yang dihapus tidak dapat dikembalikan.', () => {
+        showRichToast('ok', 'Berhasil', `Data ${m.nama} telah dihapus`);
+        btn.closest('tr').style.transition = 'all 0.3s';
+        btn.closest('tr').style.opacity = '0';
+        btn.closest('tr').style.transform = 'translateX(30px)';
+        setTimeout(() => btn.closest('tr').remove(), 300);
+      }, 'danger');
+    }
+  });
+
+  // Select all
+  document.getElementById('chkAll')?.addEventListener('change', e => {
+    tbody.querySelectorAll('.chk').forEach(c => c.checked = e.target.checked);
+  });
+
+  // Search
+  document.getElementById('mhsSearch')?.addEventListener('input', e => {
+    const q = e.target.value.toLowerCase();
+    tbody.querySelectorAll('tr').forEach(tr => {
+      tr.style.display = tr.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+  });
+}
+
+// ── Detail Mahasiswa ──────────────────────────────
+function openDetailMhs(m) {
+  document.getElementById('detailMhsTitle').textContent = m.nama;
+  const pillMap = { 'Sedang PKL':'pill-blue', 'Selesai':'pill-green', 'Pending':'pill-amber', 'Belum Mulai':'pill-red' };
+
+  document.getElementById('detailMhsBody').innerHTML = `
+    <div style="display:flex;align-items:center;gap:14px;padding-bottom:18px;border-bottom:1px solid var(--line);margin-bottom:18px;">
+      <div style="width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,${m.clr});display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff;">${m.init}</div>
+      <div>
+        <div style="font-size:17px;font-weight:800;">${m.nama}</div>
+        <div style="font-size:12px;color:var(--txt-3);font-family:'JetBrains Mono',monospace;">${m.nim}</div>
+        <span class="pill ${pillMap[m.st]} mt-2" style="display:inline-flex;margin-top:6px;">${m.st}</span>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+      ${dRow('Jurusan', m.jur)}
+      ${dRow('Perusahaan PKL', m.co)}
+      ${dRow('Dosen Pembimbing', m.dos)}
+      ${dRow('Email', m.nim.toLowerCase()+'@mhs.pnj.ac.id')}
+      ${dRow('Semester', '6 (Aktif)')}
+      ${dRow('Progres PKL', m.prog + '%')}
+    </div>
+    <div style="margin-top:16px;">
+      <div style="font-size:11px;font-weight:700;color:var(--txt-3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Progress PKL</div>
+      <div class="bar-track" style="height:8px;"><div class="bar-fill" style="width:${m.prog}%"></div></div>
+    </div>
+    <div style="margin-top:16px;padding:12px;background:var(--bg-4);border-radius:var(--r-md);border:1px solid var(--line);">
+      <div style="font-size:11px;font-weight:700;color:var(--txt-3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Nilai Komponen</div>
+      ${(() => {
+        const n = DB.nilai.find(x => x.nim === m.nim);
+        if (!n || !n.akhir) return '<div style="font-size:12px;color:var(--txt-3);">Nilai belum tersedia</div>';
+        return `<div style="display:flex;gap:16px;flex-wrap:wrap;">
+          ${dBadge('Industri', n.ni)}
+          ${dBadge('Dosen Kampus', n.nk)}
+          ${dBadge('Dosen Industri', n.ndi)}
+          ${dBadge('Nilai Akhir', n.akhir.toFixed(1), '#fbbf24')}
+        </div>`;
+      })()}
+    </div>
+  `;
+  openPopup('popupDetailMhs');
+}
+
+function dRow(key, val) {
+  return `<div><div style="font-size:11px;color:var(--txt-3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;">${key}</div><div style="font-size:13px;font-weight:600;">${val}</div></div>`;
+}
+function dBadge(key, val, clr='var(--blue)') {
+  return `<div style="text-align:center;"><div style="font-size:18px;font-weight:800;color:${clr};font-family:'JetBrains Mono',monospace;">${val}</div><div style="font-size:11px;color:var(--txt-3);">${key}</div></div>`;
+}
+
+// ── Pengajuan ──────────────────────────────────────
+function buildPengajuan() {
+  const wrap = document.getElementById('pengajuanWrap');
+  if (!wrap) return;
+
+  DB.pengajuan.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'pj-card';
+    card.innerHTML = `
+      <div class="pj-top">
+        <div class="pj-ava" style="background:linear-gradient(135deg,${p.clr})">${p.init}</div>
+        <div style="flex:1">
+          <div class="pj-name">${p.nama}</div>
+          <div class="pj-nim">${p.nim} · ${p.jur}</div>
+        </div>
+        <span class="pill pill-amber">Pending</span>
+      </div>
+      <div class="pj-info">
+        <div class="pj-row"><i class="fa-solid fa-building"></i><span>${p.co}</span></div>
+        <div class="pj-row"><i class="fa-solid fa-briefcase"></i><span>${p.pos}</span></div>
+        <div class="pj-row"><i class="fa-regular fa-calendar"></i><span>Diajukan: ${p.tgl}</span></div>
+      </div>
+      <div class="pj-actions">
+        <button class="pj-approve"><i class="fa-solid fa-check"></i> Setujui</button>
+        <button class="pj-reject"><i class="fa-solid fa-xmark"></i> Tolak</button>
+      </div>
+    `;
+
+    card.querySelector('.pj-approve').addEventListener('click', () => {
+      showConfirmDialog(
+        `Setujui pengajuan ${p.nama}?`,
+        `PKL di ${p.co} sebagai ${p.pos}`,
+        () => {
+          removeCard(card);
+          showRichToast('ok', 'Pengajuan Disetujui', `${p.nama} — ${p.co}`);
+          appendTerminalLog(`OK    :: Pengajuan ${p.nama} (${p.nim}) disetujui → ${p.co}`);
+        }
+      );
+    });
+
+    card.querySelector('.pj-reject').addEventListener('click', () => {
+      showConfirmDialog(
+        `Tolak pengajuan ${p.nama}?`,
+        'Mahasiswa akan mendapat notifikasi penolakan.',
+        () => {
+          removeCard(card);
+          showRichToast('err', 'Pengajuan Ditolak', `${p.nama} — ${p.co}`);
+          appendTerminalLog(`WARN  :: Pengajuan ${p.nama} ditolak oleh admin`);
+        },
+        'danger'
+      );
+    });
+
+    wrap.appendChild(card);
+  });
+}
+
+function removeCard(card) {
+  card.style.transition = 'all 0.35s var(--ease)';
+  card.style.opacity = '0';
+  card.style.transform = 'scale(0.9) translateY(-10px)';
+  setTimeout(() => card.remove(), 350);
+}
+
+// ── Logbook ────────────────────────────────────────
+function buildLogbook() {
+  const list = document.getElementById('lbList');
+  if (!list) return;
+  DB.logbook.forEach(lb => {
+    const el = document.createElement('div');
+    el.className = 'lb-entry';
+    el.innerHTML = `
+      <div class="lb-ava" style="background:linear-gradient(135deg,${lb.clr})">${lb.init}</div>
+      <div class="lb-main">
+        <div class="lb-name">${lb.nama}</div>
+        <div class="lb-text">${lb.ket}</div>
+      </div>
+      <div class="lb-meta">
+        <span class="pill ${lb.tipe === 'Industri' ? 'pill-blue' : 'pill-amber'}" style="font-size:10px;">${lb.tipe}</span>
+        <span class="lb-date">${lb.tgl}</span>
+        <span class="pill ${lb.ok ? 'pill-green' : 'pill-amber'}" style="font-size:10px;padding:2px 7px;">${lb.ok ? 'Verified ✓' : 'Pending'}</span>
+      </div>
+    `;
+    el.addEventListener('click', () => {
+      if (!lb.ok) {
+        showConfirmDialog('Verifikasi logbook ini?', `${lb.nama} — ${lb.ket.slice(0,50)}...`, () => {
+          lb.ok = true;
+          el.querySelector('.lb-meta span:last-child').className = 'pill pill-green';
+          el.querySelector('.lb-meta span:last-child').textContent = 'Verified ✓';
+          showRichToast('ok', 'Logbook Diverifikasi', lb.nama);
+        });
+      }
+    });
+    list.appendChild(el);
+  });
+}
+
+// ── Laporan ────────────────────────────────────────
+function buildLaporan() {
+  const grid = document.getElementById('laporanGrid');
+  if (!grid) return;
+  const iconMap = {
+    'Disetujui': { icon:'fa-file-circle-check',    bg:'rgba(52,211,153,0.15)',  clr:'#34d399' },
+    'Review':    { icon:'fa-file-magnifying-glass', bg:'rgba(79,142,247,0.15)',  clr:'#4f8ef7' },
+    'Pending':   { icon:'fa-file-circle-question',  bg:'rgba(251,191,36,0.15)', clr:'#fbbf24' },
+  };
+  DB.laporan.forEach(l => {
+    const meta = iconMap[l.st] || iconMap['Pending'];
+    const card = document.createElement('div');
+    card.className = 'lap-card';
+    card.innerHTML = `
+      <div class="lap-icon" style="background:${meta.bg};color:${meta.clr};"><i class="fa-solid ${meta.icon}"></i></div>
+      <div class="lap-title">${l.judul}</div>
+      <div class="lap-student">${l.mhs} · ${l.nim}</div>
+      <div class="lap-foot">
+        <span class="lap-date">${l.tgl}</span>
+        <div class="lap-acts">
+          <button class="act-btn act-view" title="Lihat" onclick="showRichToast('info','Laporan','Membuka laporan PDF...')"><i class="fa-solid fa-eye"></i></button>
+          <button class="act-btn act-edit" title="Download" onclick="showRichToast('ok','Download','Mengunduh ${l.mhs}.pdf...')"><i class="fa-solid fa-download"></i></button>
+        </div>
+      </div>
+    `;
+    card.addEventListener('click', e => {
+      if (e.target.closest('button')) return;
+      showLaporanDetail(l, meta);
+    });
+    grid.appendChild(card);
+  });
+}
+
+function showLaporanDetail(l, meta) {
+  const overlay = document.getElementById('popupOverlay');
+  // Reuse confirm popup as quick detail
+  const p = document.getElementById('popupConfirm');
+  document.getElementById('confirmTitle').textContent = 'Detail Laporan';
+  document.getElementById('confirmIcon').style.background = meta.bg;
+  document.getElementById('confirmIcon').style.color = meta.clr;
+  document.getElementById('confirmIcon').innerHTML = `<i class="fa-solid ${meta.icon}"></i>`;
+  document.getElementById('confirmMsg').innerHTML = `<strong style="font-size:14px;">${l.judul}</strong><br><br>
+    <span style="color:var(--txt-2);font-size:12px;">Mahasiswa: ${l.mhs} (${l.nim})<br>Tanggal submit: ${l.tgl}<br>Status: ${l.st}</span>`;
+  document.getElementById('confirmOkBtn').textContent = 'Download';
+  document.getElementById('confirmOkBtn').className = 'btn btn-primary';
+  document.getElementById('confirmOkBtn').onclick = () => {
+    showRichToast('ok','Download',`Mengunduh laporan ${l.mhs}...`);
+    closePopup('popupConfirm');
+  };
+  openPopup('popupConfirm');
+}
+
+// ── Nilai ──────────────────────────────────────────
+function buildNilai() {
+  const tbody = document.getElementById('nilaiBody');
+  if (!tbody) return;
+  const gradeClass = { 'A':'grade-A','B':'grade-B','C':'grade-C','D':'grade-D','-':'grade-x' };
+  DB.nilai.forEach(n => {
+    const tr = document.createElement('tr');
+    const has = n.akhir > 0;
+    tr.innerHTML = `
+      <td><span class="nim-tag">${n.nim}</span></td>
+      <td style="font-weight:700;color:var(--txt);">${n.nama}</td>
+      <td style="font-family:'JetBrains Mono',monospace;">${has ? n.ni : '—'}</td>
+      <td style="font-family:'JetBrains Mono',monospace;">${has ? n.nk : '—'}</td>
+      <td style="font-family:'JetBrains Mono',monospace;">${has ? n.ndi : '—'}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:800;color:#fbbf24;">${has ? n.akhir.toFixed(1) : '—'}</td>
+      <td><div class="grade-box ${gradeClass[n.grade]||'grade-x'}">${n.grade}</div></td>
+      <td><span class="pill ${has?'pill-green':'pill-amber'}">${has?'Selesai':'Proses'}</span></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// ── Industri ───────────────────────────────────────
+function buildIndustri() {
+  const grid = document.getElementById('industriGrid');
+  if (!grid) return;
+  DB.industri.forEach(ind => {
+    const [c1] = ind.clr.split(',');
+    const card = document.createElement('div');
+    card.className = 'ind-card';
+    card.innerHTML = `
+      <div class="ind-logo" style="background:${c1}22;color:${c1};">
+        <i class="fa-solid ${ind.icon}" style="font-size:20px;"></i>
+      </div>
+      <div class="ind-name">${ind.nama}</div>
+      <div class="ind-type">${ind.tipe}</div>
+      <div class="ind-stats">
+        <div><span class="is-num" style="color:var(--blue);">${ind.mhs}</span><span class="is-lbl"> Mahasiswa</span></div>
+        <div><span class="is-num" style="color:var(--green);">Aktif</span><span class="is-lbl"> Status</span></div>
+      </div>
+    `;
+    card.addEventListener('click', () => {
+      showRichToast('info', ind.nama, `${ind.tipe} — ${ind.mhs} mahasiswa aktif`);
+    });
+    grid.appendChild(card);
+  });
+}
+
+// ── Dosen ──────────────────────────────────────────
+function buildDosen() {
+  const grid = document.getElementById('dosenGrid');
+  if (!grid) return;
+  DB.dosen.forEach(d => {
+    const card = document.createElement('div');
+    card.className = 'dos-card';
+    card.innerHTML = `
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+        <div style="width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,${d.clr});display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;">${d.init}</div>
+        <div>
+          <div class="dos-name">${d.nama}</div>
+          <div class="dos-title">${d.bid} · ${d.mhs} Mahasiswa</div>
+        </div>
+      </div>
+      <div class="dos-contact">
+        <div class="dos-row"><i class="fa-solid fa-envelope"></i><span>${d.email}</span></div>
+        <div class="dos-row"><i class="fa-solid fa-phone"></i><span>${d.tlp}</span></div>
+      </div>
+    `;
+    card.addEventListener('click', () => {
+      showRichToast('info', d.nama, `${d.bid} — Membimbing ${d.mhs} mahasiswa`);
+    });
+    grid.appendChild(card);
+  });
+}
+
+// ══════════════════════════════════════════════════
+//  POPUP / MODAL SYSTEM
+// ══════════════════════════════════════════════════
+
+function openPopup(id) {
+  document.getElementById('popupOverlay').classList.add('open');
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+window.openPopup = openPopup;
+
+function closePopup(id) {
+  document.getElementById(id).classList.remove('open');
+  // If no other popup open, close overlay
+  const anyOpen = document.querySelector('.popup.open');
+  if (!anyOpen) {
+    document.getElementById('popupOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+window.closePopup = closePopup;
+
+function closeAllPopups() {
+  document.querySelectorAll('.popup.open').forEach(p => p.classList.remove('open'));
+  document.getElementById('popupOverlay')?.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Close when clicking overlay
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('popupOverlay')?.addEventListener('click', closeAllPopups);
+});
+
+// Confirm Dialog
+let _confirmCb = null;
+function showConfirmDialog(title, msg, onConfirm, type = 'warn') {
+  document.getElementById('confirmTitle').textContent = title;
+  document.getElementById('confirmMsg').textContent = msg;
+  const icon = document.getElementById('confirmIcon');
+  const btn = document.getElementById('confirmOkBtn');
+
+  if (type === 'danger') {
+    icon.style.background = 'rgba(248,113,113,0.15)';
+    icon.style.color = '#f87171';
+    icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+    btn.className = 'btn btn-danger';
+    btn.textContent = 'Ya, Hapus';
+  } else {
+    icon.style.background = 'rgba(251,191,36,0.15)';
+    icon.style.color = '#fbbf24';
+    icon.innerHTML = '<i class="fa-solid fa-circle-question"></i>';
+    btn.className = 'btn btn-primary';
+    btn.textContent = 'Ya, Lanjutkan';
+  }
+
+  _confirmCb = onConfirm;
+  btn.onclick = () => { if (_confirmCb) _confirmCb(); closePopup('popupConfirm'); };
+  openPopup('popupConfirm');
+}
+window.showConfirmDialog = showConfirmDialog;
+
+// Add Mahasiswa Form
+function openAddMahasiswaForm() { openPopup('popupAddMhs'); }
+window.openAddMahasiswaForm = openAddMahasiswaForm;
+
+function submitAddMahasiswa() {
+  const nim = document.getElementById('fNIM').value.trim();
+  const nama = document.getElementById('fNama').value.trim();
+  const jur = document.getElementById('fJurusan').value;
+  const co = document.getElementById('fPerusahaan').value.trim();
+
+  if (!nim || !nama || !jur || !co) {
+    showRichToast('warn', 'Form tidak lengkap', 'Mohon isi semua field yang bertanda *');
+    return;
+  }
+
+  showLoading('Menyimpan data mahasiswa...');
+  setTimeout(() => {
+    hideLoading();
+    closePopup('popupAddMhs');
+    showRichToast('ok', 'Berhasil Ditambahkan', `${nama} (${nim}) — ${co}`);
+    appendTerminalLog(`OK    :: Mahasiswa baru ditambahkan: ${nama} (${nim}) → ${co}`);
+    // Reset form
+    ['fNIM','fNama','fPerusahaan'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('fJurusan').value = '';
+  }, 1400);
+}
+window.submitAddMahasiswa = submitAddMahasiswa;
+
+// Export Dialog
+function showExportDialog() { openPopup('popupExport'); }
+window.showExportDialog = showExportDialog;
+
+function doExport() {
+  const fmt = document.querySelector('input[name="exportFmt"]:checked')?.value || 'xlsx';
+  showLoading(`Mengekspor data ke .${fmt}...`);
+  setTimeout(() => {
+    hideLoading();
+    closePopup('popupExport');
+    showRichToast('ok', 'Export Berhasil', `File data-pkl-${new Date().toISOString().slice(0,10)}.${fmt} siap diunduh`);
+  }, 1800);
+}
+window.doExport = doExport;
+
+// Flow Detail
+function showFlowDetail() { openPopup('popupFlow'); }
+window.showFlowDetail = showFlowDetail;
+
+// Sistem Process Detail
+const sistemInfo = {
+  kalkulasi: {
+    title: 'Kalkulasi & Rekapitulasi Nilai Akhir',
+    desc: 'Sistem secara otomatis menghitung nilai akhir PKL dari semua komponen dengan bobot yang telah dikonfigurasi admin. Proses ini dilakukan oleh aktor <strong>Sistem</strong> dalam alur BPMN.',
+    lastRun: 'Hari ini, 08:00 WIB',
+    status: '198 / 247 berhasil',
+    durasi: '13 detik',
+  },
+  verifikasi: {
+    title: 'Verifikasi Jumlah Bimbingan',
+    desc: 'Sistem memverifikasi bahwa minimal jumlah pertemuan bimbingan terpenuhi sebelum mahasiswa dapat submit laporan akhir.',
+    lastRun: 'Kemarin, 22:00 WIB',
+    status: '230 mahasiswa lolos',
+    durasi: '5 detik',
+  },
+  simpan: {
+    title: 'Menyimpan Form Pengajuan',
+    desc: 'Setelah ditandatangani, sistem secara otomatis menyimpan dan mengarsipkan form pengajuan ke database.',
+    lastRun: '2 hari lalu',
+    status: '12 form tersimpan',
+    durasi: '2 detik',
+  },
+  notif: {
+    title: 'Notifikasi Deadline Logbook',
+    desc: 'Setiap awal minggu, sistem menjalankan cron job untuk memeriksa dan mengirim reminder ke mahasiswa yang belum mengisi logbook.',
+    lastRun: 'Hari ini, 00:00 WIB',
+    status: '5 mahasiswa diberi peringatan',
+    durasi: '3 detik',
+  },
+};
+
+function showSistemDetail(key) {
+  const info = sistemInfo[key];
+  if (!info) return;
+  document.getElementById('sistemTitle').innerHTML = `<i class="fa-solid fa-server"></i> ${info.title}`;
+  document.getElementById('sistemBody').innerHTML = `
+    <p style="font-size:13px;color:var(--txt-2);line-height:1.6;margin-bottom:16px;">${info.desc}</p>
+    <div class="sd-meta">
+      ${sdRow('Terakhir dijalankan', info.lastRun)}
+      ${sdRow('Hasil', info.status)}
+      ${sdRow('Durasi eksekusi', info.durasi)}
+    </div>
+  `;
+  openPopup('popupSistem');
+}
+window.showSistemDetail = showSistemDetail;
+
+function sdRow(key, val) {
+  return `<div class="sd-row"><span class="sd-key">${key}</span><span class="sd-val">${val}</span></div>`;
+}
+
+function runFromModal() {
+  closePopup('popupSistem');
+  runSistemKalkulasi();
+}
+window.runFromModal = runFromModal;
+
+// Run Sistem Kalkulasi
+function runSistemKalkulasi() {
+  showLoading('Menjalankan proses sistem...');
+  const msgs = [
+    'INFO  :: Proses kalkulasi nilai dimulai...',
+    'INFO  :: Mengambil data nilai dari 247 mahasiswa',
+    'OK    :: 198 nilai berhasil dikalkulasi',
+    'WARN  :: 49 data nilai belum lengkap',
+    'OK    :: Rekapitulasi disimpan ke database',
+    'OK    :: Proses selesai dalam 13 detik',
+  ];
+  let i = 0;
+  const interval = setInterval(() => {
+    appendTerminalLog(msgs[i]);
+    i++;
+    if (i >= msgs.length) {
+      clearInterval(interval);
+      hideLoading();
+      showRichToast('ok', 'Proses Selesai', 'Sistem berhasil merekap 198 nilai mahasiswa');
+    }
+  }, 280);
+}
+window.runSistemKalkulasi = runSistemKalkulasi;
+
+// Filter Dialog (stub)
+function openFilterDialog() {
+  showRichToast('info', 'Filter', 'Fitur filter lanjutan sedang dikembangkan');
+}
+window.openFilterDialog = openFilterDialog;
+
+// Add Industri / Dosen forms
+function openAddIndustriForm() {
+  showRichToast('info', 'Tambah Mitra', 'Form tambah mitra industri akan segera tersedia');
+}
+function openAddDosenForm() {
+  showRichToast('info', 'Tambah Dosen', 'Form tambah dosen pembimbing akan segera tersedia');
+}
+window.openAddIndustriForm = openAddIndustriForm;
+window.openAddDosenForm = openAddDosenForm;
+
+// ══════════════════════════════════════════════════
+//  TOAST NOTIFICATION
+// ══════════════════════════════════════════════════
+const TOAST_ICONS = {
+  ok:   'fa-circle-check',
+  err:  'fa-circle-xmark',
+  warn: 'fa-triangle-exclamation',
+  info: 'fa-circle-info',
+};
+
+function showRichToast(type, title, msg = '') {
+  const wrap = document.getElementById('toastWrap');
+  if (!wrap) return;
+
+  const t = document.createElement('div');
+  t.className = `toast toast-${type}`;
+  t.innerHTML = `
+    <i class="toast-i fa-solid ${TOAST_ICONS[type] || TOAST_ICONS.info}"></i>
+    <div class="toast-body">
+      <div class="toast-title">${title}</div>
+      ${msg ? `<div class="toast-msg">${msg}</div>` : ''}
+    </div>
+    <button class="toast-close" onclick="this.closest('.toast').remove()"><i class="fa-solid fa-xmark"></i></button>
+    <div class="toast-progress"></div>
+  `;
+
+  wrap.appendChild(t);
+  setTimeout(() => {
+    t.classList.add('toast-out');
+    setTimeout(() => t.remove(), 300);
+  }, 3500);
+}
+window.showRichToast = showRichToast;
+
+// ── Loading ────────────────────────────────────────
+function showLoading(msg = 'Memproses...') {
+  const el = document.getElementById('loadingOverlay');
+  const msgEl = document.getElementById('loadingMsg');
+  if (msgEl) msgEl.textContent = msg;
+  el?.classList.add('active');
+}
+function hideLoading() {
+  document.getElementById('loadingOverlay')?.classList.remove('active');
+}
+window.showLoading = showLoading;
+window.hideLoading = hideLoading;
+
+// ── Terminal Log ───────────────────────────────────
+function appendTerminalLog(text) {
+  const box = document.getElementById('terminalBox');
+  if (!box) return;
+  const ts = new Date().toLocaleString('sv').replace('T', ' ');
+  const cls = text.includes('OK') ? 'term-ok' : text.includes('WARN') ? 'term-warn' : text.includes('ERROR') ? 'term-err' : 'term-info';
+  const line = document.createElement('div');
+  line.className = `term-line ${cls}`;
+  line.textContent = `[${ts}] ${text}`;
+  box.insertBefore(line, box.firstChild);
+}
+
+// ── Session & Auth Integration ─────────────────────
+function initSessionUser() {
+  try {
+    const raw = localStorage.getItem('sipkl_session');
+    if (!raw) return;
+    const session = JSON.parse(raw);
+    const fullnameEl = document.querySelector('.user-fullname');
+    const badgeEl = document.querySelector('.user-badge');
+    const sidebarAva = document.getElementById('sidebarAva');
+    const topAvatar = document.getElementById('topAvatar');
+
+    if (fullnameEl && session.name) fullnameEl.textContent = session.name;
+    if (badgeEl && session.roleName) badgeEl.textContent = session.roleName;
+    if (sidebarAva && session.initials) sidebarAva.textContent = session.initials;
+    if (topAvatar && session.initials) topAvatar.textContent = session.initials;
+  } catch (err) {
+    console.warn('Session parse error:', err);
+  }
+}
+window.initSessionUser = initSessionUser;
+
+function handleLogout() {
+  showConfirmDialog(
+    'Keluar dari sistem?',
+    'Sesi Anda akan diakhiri dan dialihkan kembali ke halaman login utama.',
+    () => {
+      localStorage.removeItem('sipkl_session');
+      showRichToast('info', 'Logout', 'Sesi berhasil diakhiri');
+      setTimeout(() => {
+        window.location.href = '../index.html';
+      }, 600);
+    },
+    'warn'
+  );
+}
+window.handleLogout = handleLogout;
+
+
+</script>
+</body>
+</html>

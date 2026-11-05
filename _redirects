@@ -1,5 +1,15 @@
 # Netlify Redirects & Clean URLs for SiPKL PBL Dashboard
-/admin        /Super%20Admin%20Page/index.html    200
-/dashboard    /Super%20Admin%20Page/index.html    200
-/superadmin   /Super%20Admin%20Page/index.html    200
-
+/login            /login.html                         200
+/admin            /Super%20Admin%20Page/index.html    200
+/dashboard        /Super%20Admin%20Page/index.html    200
+/superadmin       /Super%20Admin%20Page/index.html    200
+/admin/mahasiswa  /Super%20Admin%20Page/mahasiswa.html 200
+/admin/pengajuan  /Super%20Admin%20Page/pengajuan.html 200
+/admin/logbook    /Super%20Admin%20Page/logbook.html   200
+/admin/laporan    /Super%20Admin%20Page/laporan.html   200
+/admin/penilaian  /Super%20Admin%20Page/penilaian.html 200
+/admin/sistem     /Super%20Admin%20Page/sistem.html    200
+/admin/industri   /Super%20Admin%20Page/industri.html  200
+/admin/dosen      /Super%20Admin%20Page/dosen.html     200
+/design-system    /Design%20System/index.html         200
+/designsystem     /Design%20System/index.html         200
